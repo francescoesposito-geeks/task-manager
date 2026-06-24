@@ -5,4 +5,16 @@ export interface Task {
   priority: "low" | "medium" | "high";
 }
 
-export default function TaskItem() {}
+export interface TaskItemProps {
+  task: Task;
+}
+
+export default function TaskItem({ task }: TaskItemProps) {
+  return (
+    <li>
+      <h3>{task.title}</h3>
+      <p>{task.description}</p>
+      <span>{task.priority}</span>
+    </li>
+  );
+}

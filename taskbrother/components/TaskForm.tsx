@@ -12,7 +12,7 @@ export default function TaskForm({
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<"low" | "medium" | "high">("medium");
 
-  const handleSubmit = (e: React.SubmitEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const nuovoTask: Task = {
@@ -28,7 +28,6 @@ export default function TaskForm({
     setDescription("");
     setPriority("medium");
   };
-
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <input
