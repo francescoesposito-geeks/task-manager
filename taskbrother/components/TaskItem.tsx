@@ -80,7 +80,7 @@ export default function TaskItem({ task, onRemove, onUpdate }: TaskItemProps) {
           <textarea
             value={editDescription}
             onChange={(e) => setEditDescription(e.target.value)}
-            className="border border-gray-300 rounded-md p-2"
+            className="border border-gray-400 rounded-md p-2 bg-white"
           />
           {errors.description && (
             <span className="text-red-600 text-sm text-left mt-1">
