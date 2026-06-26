@@ -14,7 +14,7 @@ export default function TaskList({
   onUpdateTask
 }: TaskListProps) {
   return (
-    <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-18 p-6 w-full">
+    <ul className="grid grid-cols-1 max-w-lg md:grid-cols-2 md:max-w-4xl lg:grid-cols-3 lg:max-w-full gap-18 p-2 w-full mx-auto">
       {tasks.map((task) => (
         <TaskItem
           key={task.id}
