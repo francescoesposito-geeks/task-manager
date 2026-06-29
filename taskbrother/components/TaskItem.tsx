@@ -1,6 +1,7 @@
 "use client";
 import { taskSchema } from "@/lib/schemas/task";
 import { useState } from "react";
+import TaskFormBody from "./TaskFormBody";
 
 export interface Task {
   id: string;
@@ -64,55 +65,37 @@ export default function TaskItem({ task, onRemove, onUpdate }: TaskItemProps) {
   if (isEditing) {
     return (
       <li className="flex flex-col p-4 text-center gap-4 border border-gray-800 rounded-lg shadow-xl bg-gray-100">
-        <div className="flex flex-col w-full">
-          <input
-            value={editTitle}
-            onChange={(e) => setEditTitle(e.target.value)}
-            className="border border-gray-400 rounded-md p-2 bg-white"
-          />
-          {errors.title && (
-            <span className="text-red-600 text-sm text-left mt-1">
-              {errors.title}
-            </span>
-          )}
-        </div>
-        <div className="flex flex-col w-full">
-          <textarea
-            value={editDescription}
-            onChange={(e) => setEditDescription(e.target.value)}
-            className="border border-gray-400 rounded-md p-2 bg-white"
-          />
-          {errors.description && (
-            <span className="text-red-600 text-sm text-left mt-1">
-              {errors.description}
-            </span>
-          )}
-        </div>
-        <select
-          value={editPriority}
-          onChange={(e) =>
-            setEditPriority(e.target.value as "bassa" | "media" | "alta")
-          }
-          className="border border-gray-400 rounded-md p-2 cursor-pointer bg-white"
+        <TaskFormBody
+          initialValues={{
+            title: task.title,
+            description: task.description,
+            priority: task.priority
+          }}
+          onSubmit={(updatedData) => {
+            onUpdate({
+              ...task,
+              ...updatedData
+            });
+            setIsEditing(false);
+          }}
+          className="flex flex-col gap-4"
         >
-          <option value="bassa">Bassa</option>
-          <option value="media">Media</option>
-          <option value="alta">Alta</option>
-        </select>
-        <div className="flex gap-2 justify-center">
-          <button
-            onClick={handleSave}
-            className="bg-[#49ba73] hover:bg-green-600 text-white py-1 px-3 rounded cursor-pointer"
-          >
-            Salva
-          </button>
-          <button
-            onClick={handleCancel}
-            className="bg-red-600 hover:bg-red-800 text-white py-1 px-3 rounded cursor-pointer"
-          >
-            Annulla
-          </button>
-        </div>
+          <div className="flex gap-2 justify-center mt-2">
+            <button
+              type="submit"
+              className="bg-[#49ba73] hover:bg-green-600 text-white py-1 px-3 rounded cursor-pointer"
+            >
+              Salva
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsEditing(false)}
+              className="bg-red-600 hover:bg-red-800 text-white py-1 px-3 rounded cursor-pointer"
+            >
+              Annulla
+            </button>
+          </div>
+        </TaskFormBody>
       </li>
     );
   }

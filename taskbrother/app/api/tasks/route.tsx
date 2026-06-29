@@ -5,20 +5,20 @@ import { taskSchema } from "../../../lib/schemas/task";
 let fakeTasksDb: Task[] = [
   {
     id: "1",
-    title: "longare hyperliquid",
-    description: "jeff per sempre",
+    title: "studiare css",
+    description: "tailwind ",
     priority: "alta"
   },
   {
     id: "2",
     title: "Fare la spesa",
-    description: "Latte e madonne",
+    description: "Latte e mandorle",
     priority: "bassa"
   },
   {
     id: "3",
-    title: "cagare male",
-    description: "squaraus diretto a cascata brother",
+    title: "sistemare casa",
+    description: "pulire balcone e camera",
     priority: "media"
   }
 ];
