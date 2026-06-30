@@ -1,5 +1,5 @@
 "use client";
-import { taskSchema } from "@/lib/schemas/task";
+import { taskSchema } from "../lib/schemas/task";
 import { useState } from "react";
 import TaskFormBody from "./TaskFormBody";
 

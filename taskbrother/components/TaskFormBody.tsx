@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { taskSchema } from "@/lib/schemas/task";
+import { taskSchema } from "../lib/schemas/task";
 
 export interface TaskFormData {
   title: string;

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Task } from "@/components/TaskItem";
-import { fetchTasks, addTask, deleteTask, updateTask } from "@/lib/api/tasks";
+import { fetchTasks, addTask, deleteTask, updateTask } from "../lib/api/tasks";
 
 const TASKS_KEY = ["tasks"];
 

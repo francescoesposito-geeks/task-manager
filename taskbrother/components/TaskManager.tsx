@@ -6,7 +6,7 @@ import {
   useAddTask,
   useDeleteTask,
   useUpdateTask
-} from "@/hooks/useTasks";
+} from "../hooks/useTasks";
 
 export default function TaskManager() {
   const { data = [], isLoading, isError, error } = useTasks();
