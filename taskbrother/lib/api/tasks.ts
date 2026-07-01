@@ -1,4 +1,4 @@
-import { Task } from "@/components/TaskItem";
+import { Task } from "../../types/board";
 
 export async function fetchTasks(): Promise<Task[]> {
   const res = await fetch("/api/tasks", { method: "GET" });
