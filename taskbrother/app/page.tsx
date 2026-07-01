@@ -1,4 +1,4 @@
-import TaskManager from "../components/TaskManager";
+import BoardManager from "../components/BoardManager";
 
 export default function Home() {
   return (
@@ -7,8 +7,7 @@ export default function Home() {
         <div className="flex justify-center mb-1 gap-6 items-center">
           <h1 className="font-bold text-4xl">TASK MANAGER</h1>
         </div>
-
-        <TaskManager />
+        <BoardManager />
       </div>
     </main>
   );
