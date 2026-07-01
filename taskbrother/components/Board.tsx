@@ -15,6 +15,7 @@ export interface BoardProps {
   onDeleteColumn: (columnId: string) => void;
   onMoveColumnLeft: (columnId: string) => void;
   onMoveColumnRight: (columnId: string) => void;
+  onAddTask: (columnId: string, task: Task) => void;
 }
 
 export default function Board({
@@ -25,7 +26,8 @@ export default function Board({
   onRenameColumn,
   onDeleteColumn,
   onMoveColumnLeft,
-  onMoveColumnRight
+  onMoveColumnRight,
+  onAddTask
 }: BoardProps) {
   return (
     <div className="flex overflow-x-auto gap-6 items-start w-full">
@@ -41,6 +43,7 @@ export default function Board({
           onDeleteColumn={onDeleteColumn}
           onMoveColumnLeft={onMoveColumnLeft}
           onMoveColumnRight={onMoveColumnRight}
+          onAddTask={onAddTask}
         />
       ))}
     </div>
