@@ -51,7 +51,7 @@ export default function FormBody({
     }
 
     const success = onSubmit(result.data);
-    if (success) {
+    if (success && !initialValues) {
       setTitle("");
       setDescription("");
       setPriority("");

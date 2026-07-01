@@ -66,7 +66,20 @@ export default function TaskItem({
   }
 
   return (
-    <li className="flex flex-col p-4 text-center gap-3 border border-gray-300 rounded-lg shadow bg-white list-none">
+    <li
+      className="flex flex-col p-4 text-center gap-3 border border-gray-300 rounded-lg shadow bg-white list-none"
+      draggable="true"
+      onDragStart={(e) => {
+        e.dataTransfer.setData(
+          "application/json",
+          JSON.stringify({
+            taskId: task.id,
+            fromColumnId: currentColumnId
+          })
+        );
+        e.dataTransfer.effectAllowed = "move";
+      }}
+    >
       <div className="flex justify-end">
         <button
           onClick={() => onRemove(task.id)}

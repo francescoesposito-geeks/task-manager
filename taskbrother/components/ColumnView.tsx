@@ -32,6 +32,7 @@ export default function ColumnView({
 }: ColumnViewProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState(column.title);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const sortedTasks = [...column.tasks].sort(
     (a, b) => priorityWeight[b.priority] - priorityWeight[a.priority]
@@ -44,8 +45,46 @@ export default function ColumnView({
     setIsEditingTitle(false);
   };
 
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDragEnter = () => {
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+
+    try {
+      const rawData = e.dataTransfer.getData("application/json");
+      if (!rawData) return;
+
+      const { taskId, fromColumnId } = JSON.parse(rawData);
+
+      onMoveTask(fromColumnId, column.id, taskId);
+    } catch (error) {
+      console.error("Errore D&D JSON Parse:", error);
+    }
+  };
+
   return (
-    <div className="flex flex-col w-72 shrink-0 bg-gray-50 rounded-lg p-4 max-h-[80vh]">
+    <div
+      onDragOver={handleDragOver}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      className={`flex flex-col w-72 shrink-0 rounded-lg p-4 max-h-[80vh] transition-all duration-300 pb-16 ${
+        isDragOver
+          ? "bg-gray-200 border border-blue-300"
+          : "bg-gray-50 border-2 border-transparent"
+      }`}
+    >
       <div className="flex justify-between items-center mb-4 gap-2">
         {isEditingTitle ? (
           <input

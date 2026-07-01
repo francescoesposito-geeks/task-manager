@@ -120,7 +120,7 @@ export default function BoardManager() {
   }
 
   return (
-    <div className="flex flex-col gap-8 p-6">
+    <div className="flex flex-col gap-12 p-6">
       <div className="flex flex-wrap gap-8 justify-center">
         <NewTaskForm columns={columns} onAddTask={handleAddTask} />
         <NewColumnForm onAddColumn={handleAddColumn} />

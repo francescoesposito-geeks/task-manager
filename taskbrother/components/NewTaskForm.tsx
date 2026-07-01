@@ -14,7 +14,7 @@ export default function NewTaskForm({ columns, onAddTask }: NewTaskFormProps) {
 
   const handleFormSubmit = (taskData: TaskFormData) => {
     if (!columnId) {
-      setColumnError("Seleziona una colonna obbligatoriamente");
+      setColumnError("Seleziona una colonna");
       return false;
     }
 
@@ -42,7 +42,7 @@ export default function NewTaskForm({ columns, onAddTask }: NewTaskFormProps) {
           htmlFor="columnSelect"
           className="text-sm font-semibold text-gray-700 px-1"
         >
-          Colonna di destinazione
+          Stato della Task
         </label>
         <select
           id="columnSelect"
