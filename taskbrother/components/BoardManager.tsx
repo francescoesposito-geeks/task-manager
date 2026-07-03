@@ -1,9 +1,10 @@
 "use client";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { Column, Task, initialColumns } from "../types/board";
+import { Column, Task } from "../types/board";
 import NewTaskForm from "./NewTaskForm";
 import NewColumnForm from "./NewColumnForm";
 import Board from "./Board";
+import { initialColumns } from "../data/initialColumns";
 
 export default function BoardManager() {
   const [columns, setColumns, isLoaded] = useLocalStorage<Column[]>(
@@ -120,8 +121,8 @@ export default function BoardManager() {
   }
 
   return (
-    <div className="flex flex-col gap-12 p-6">
-      <div className="flex flex-wrap gap-8 justify-center">
+    <div className="flex flex-col gap-12 p-6 mt-8">
+      <div className="flex flex-wrap gap-12 justify-center">
         <NewTaskForm columns={columns} onAddTask={handleAddTask} />
         <NewColumnForm onAddColumn={handleAddColumn} />
       </div>
@@ -135,6 +136,7 @@ export default function BoardManager() {
         onDeleteColumn={handleDeleteColumn}
         onMoveColumnLeft={handleMoveColumnLeft}
         onMoveColumnRight={handleMoveColumnRight}
+        onAddTask={handleAddTask}
       />
     </div>
   );

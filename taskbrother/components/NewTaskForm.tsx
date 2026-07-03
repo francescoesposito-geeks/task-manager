@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Column, Task } from "../types/board";
-import FormBody, { TaskFormData } from "./FormBody";
+import { taskSchema } from "../lib/schemas/task";
 
 export interface NewTaskFormProps {
   columns: Column[];
@@ -9,70 +9,137 @@ export interface NewTaskFormProps {
 }
 
 export default function NewTaskForm({ columns, onAddTask }: NewTaskFormProps) {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [priority, setPriority] = useState<"bassa" | "media" | "alta" | "">("");
   const [columnId, setColumnId] = useState("");
-  const [columnError, setColumnError] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleFormSubmit = (taskData: TaskFormData) => {
-    if (!columnId) {
-      setColumnError("Seleziona una colonna");
-      return false;
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrors({});
+
+    const result = taskSchema.safeParse({ title, description, priority });
+
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {};
+      result.error.issues.forEach((issue) => {
+        fieldErrors[issue.path[0] as string] = issue.message;
+      });
+      setErrors(fieldErrors);
+      return;
     }
 
-    const nuovoTask: Task = {
+    if (!columnId) {
+      setErrors((prev) => ({ ...prev, columnId: "Seleziona una colonna" }));
+      return;
+    }
+
+    onAddTask(columnId, {
       id: crypto.randomUUID(),
-      title: taskData.title,
-      description: taskData.description || undefined,
-      priority: taskData.priority
-    };
+      title: result.data.title,
+      description: result.data.description || undefined,
+      priority: result.data.priority
+    });
 
-    onAddTask(columnId, nuovoTask);
-
+    setTitle("");
+    setDescription("");
+    setPriority("");
     setColumnId("");
-    setColumnError("");
-    return true;
+    setErrors({});
   };
 
   return (
-    <FormBody
-      onSubmit={handleFormSubmit}
-      className="flex flex-col p-4  text-center gap-3 border border-gray-300 rounded-lg shadow bg-gray-50"
+    <form
+      onSubmit={handleSubmit}
+      className="p-6 border border-gray-300 rounded-lg shadow-xl bg-gray-50"
+      noValidate
     >
-      <div className="flex flex-col gap-1 text-left">
-        <label
-          htmlFor="columnSelect"
-          className="text-sm font-semibold text-gray-700 px-1"
-        >
-          Stato della Task
-        </label>
-        <select
-          id="columnSelect"
-          value={columnId}
-          onChange={(e) => {
-            setColumnId(e.target.value);
-            setColumnError("");
-          }}
-          className="border border-gray-300 rounded-md p-2 cursor-pointer bg-white text-gray-900"
-        >
-          <option value="" disabled>
-            Scegli colonna...
-          </option>
-          {columns.map((col) => (
-            <option key={col.id} value={col.id}>
-              {col.title}
+      <h3 className="font-bold mb-4 text-lg">Nuova Task</h3>
+      <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-semibold text-gray-700">
+            Titolo del Task
+          </label>
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Titolo"
+            className="border border-gray-300 rounded-md p-2 bg-white"
+          />
+          {errors.title && (
+            <span className="text-red-600 text-sm">{errors.title}</span>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-semibold text-gray-700">
+            Livello di Priorità
+          </label>
+          <select
+            value={priority}
+            onChange={(e) =>
+              setPriority(e.target.value as "bassa" | "media" | "alta")
+            }
+            className="border border-gray-300 rounded-md p-2 bg-white cursor-pointer"
+          >
+            <option value="" disabled hidden>
+              Seleziona...
             </option>
-          ))}
-        </select>
-        {columnError && (
-          <span className="text-red-600 text-sm">{columnError}</span>
-        )}
+            <option value="bassa">Bassa</option>
+            <option value="media">Media</option>
+            <option value="alta">Alta</option>
+          </select>
+          {errors.priority && (
+            <span className="text-red-600 text-sm">{errors.priority}</span>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-semibold text-gray-700">
+            Descrizione
+          </label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Descrizione"
+            className="border border-gray-300 rounded-md p-2 bg-white"
+          />
+          {errors.description && (
+            <span className="text-red-600 text-sm">{errors.description}</span>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-semibold text-gray-700">
+            Stato della Task
+          </label>
+          <select
+            value={columnId}
+            onChange={(e) => setColumnId(e.target.value)}
+            className="border border-gray-300 rounded-md p-2 bg-white cursor-pointer"
+          >
+            <option value="" disabled>
+              Seleziona...
+            </option>
+            {columns.map((col) => (
+              <option key={col.id} value={col.id}>
+                {col.title}
+              </option>
+            ))}
+          </select>
+          {errors.columnId && (
+            <span className="text-red-600 text-sm">{errors.columnId}</span>
+          )}
+        </div>
       </div>
 
       <button
         type="submit"
-        className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow cursor-pointer mt-2"
+        className="mt-5 w-full bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow cursor-pointer"
       >
         Aggiungi task
       </button>
-    </FormBody>
+    </form>
   );
 }

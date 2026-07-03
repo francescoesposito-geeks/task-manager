@@ -28,10 +28,10 @@ export default function NewColumnForm({ onAddColumn }: NewColumnFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-3 border border-gray-300 rounded-md p-4 w-72 shadow self-start bg-gray-50"
+      className="flex flex-col gap-3 border border-gray-300 rounded-md p-6 w-72 self-start bg-gray-50 shadow-2xl"
       noValidate
     >
-      <h3 className="font-bold">Nuova colonna</h3>
+      <h3 className="font-bold text-lg">Nuova Colonna</h3>
 
       <div className="flex flex-col">
         <label

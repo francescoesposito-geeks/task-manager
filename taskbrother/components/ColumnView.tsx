@@ -2,7 +2,7 @@
 import { useState, useRef } from "react";
 import { Column, Task, priorityWeight } from "../types/board";
 import TaskItem from "./TaskItem";
-import FormBody, { TaskFormData } from "./FormBody";
+import FormBody, { TaskFormData } from "./FormUpdateTask";
 
 export interface ColumnViewProps {
   column: Column;
@@ -93,13 +93,12 @@ export default function ColumnView({
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`flex flex-col w-72 shrink-0 rounded-lg p-4 max-h-[80vh] transition-all duration-200 ${
+      className={`flex flex-col w-72 shrink-0 rounded-lg p-4 max-h-[80vh] transition-all duration-200 shadow-xl ${
         isDragOver
-          ? "bg-gray-200 border-2 border-dashed border-blue-400"
-          : "bg-gray-50 border-2 border-transparent"
+          ? "bg-gray-200 border border-blue-400"
+          : "bg-gray-50 border border-transparent"
       }`}
     >
-      {/* HEADER */}
       <div className="flex justify-between items-center mb-4 gap-2">
         {isEditingTitle ? (
           <input
@@ -118,55 +117,50 @@ export default function ColumnView({
             {column.title}
           </h2>
         )}
-        <div className="flex gap-1">
+        <div className="flex items-center content-center gap-5">
           <button
             onClick={() => onMoveColumnLeft(column.id)}
-            className="text-gray-400 hover:text-gray-800 text-sm font-bold"
+            className="text-gray-400 hover:text-gray-800 text-sm font-bold cursor-pointer"
           >
             ◀
           </button>
           <button
             onClick={() => onMoveColumnRight(column.id)}
-            className="text-gray-400 hover:text-gray-800 text-sm font-bold"
+            className="text-gray-400 hover:text-gray-800 text-sm font-bold cursor-pointer"
           >
             ▶
           </button>
           <button
             onClick={() => onDeleteColumn(column.id)}
-            className="text-gray-500 hover:text-red-600 text-sm shrink-0"
+            className="text-gray-500 hover:text-red-600 text-xl shrink-0 cursor-pointer"
           >
-            elimina
+            x
           </button>
         </div>
       </div>
 
-      {/* LISTA TASK */}
       <ul className="flex flex-col gap-4 overflow-y-auto flex-1 mb-4">
         {sortedTasks.map((task) => (
           <TaskItem
             key={task.id}
             task={task}
             currentColumnId={column.id}
-            allColumns={allColumns}
             onRemove={(taskId) => onRemoveTask(column.id, taskId)}
             onUpdate={(updatedTask) => onUpdateTask(column.id, updatedTask)}
-            onMove={(toColumnId) => onMoveTask(column.id, toColumnId, task.id)}
           />
         ))}
       </ul>
 
-      {/* BOTTONE IN FONDO ALLA COLONNA */}
       <button
         onClick={openModal}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow cursor-pointer transition-colors text-sm mt-auto"
+        className="w-full bg-gray-400 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md shadow cursor-pointer transition-colors text-sm mt-auto"
       >
         + Aggiungi task
       </button>
 
-      {/* STRUTTURA DELLA MODALE NATIVA */}
       <dialog
         ref={dialogRef}
-        className="rounded-lg p-6 shadow-2xl backdrop:bg-black/50 backdrop:backdrop-blur-sm w-96 border border-gray-200"
+        className="m-auto rounded-lg p-6 shadow-2xl backdrop:bg-black/50 backdrop:backdrop-blur-sm w-96 border border-gray-200"
       >
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-bold text-gray-900">
@@ -181,19 +175,19 @@ export default function ColumnView({
         </div>
 
         <FormBody onSubmit={handleFormSubmit} className="flex flex-col gap-4">
-          <div className="flex gap-2 justify-end mt-4">
+          <div className="flex gap-2 justify-center mt-4">
+            <button
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md text-sm font-semibold cursor-pointer"
+            >
+              Conferma
+            </button>
             <button
               type="button"
               onClick={closeModal}
               className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-md text-sm font-semibold cursor-pointer"
             >
               Annulla
-            </button>
-            <button
-              type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md text-sm font-semibold cursor-pointer"
-            >
-              Conferma
             </button>
           </div>
         </FormBody>

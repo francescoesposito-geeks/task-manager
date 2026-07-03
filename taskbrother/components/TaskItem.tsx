@@ -1,24 +1,20 @@
 "use client";
 import { useState } from "react";
 import { Column, Task } from "../types/board";
-import FormBody, { TaskFormData } from "./FormBody";
+import FormBody, { TaskFormData } from "./FormUpdateTask";
 
 export interface TaskItemProps {
   task: Task;
   currentColumnId: string;
-  allColumns: Column[];
   onRemove: (id: string) => void;
   onUpdate: (updatedTask: Task) => void;
-  onMove: (toColumnId: string) => void;
 }
 
 export default function TaskItem({
   task,
   currentColumnId,
-  allColumns,
   onRemove,
-  onUpdate,
-  onMove
+  onUpdate
 }: TaskItemProps) {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -100,18 +96,6 @@ export default function TaskItem({
       <span className="text-xs uppercase tracking-wide text-gray-500">
         {task.priority}
       </span>
-
-      <select
-        value={currentColumnId}
-        onChange={(e) => onMove(e.target.value)}
-        className="border border-gray-300 rounded-md p-1 text-sm cursor-pointer"
-      >
-        {allColumns.map((col) => (
-          <option key={col.id} value={col.id}>
-            {col.title}
-          </option>
-        ))}
-      </select>
 
       <button
         onClick={() => setIsEditing(true)}
