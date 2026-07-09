@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef } from "react";
-import { Column, Task, priorityWeight } from "../types/board";
+import { Column, Task } from "../types/board";
 import TaskItem from "./TaskItem";
 import FormBody, { TaskFormData } from "./FormUpdateTask";
 
@@ -23,7 +23,6 @@ export interface ColumnViewProps {
 
 export default function ColumnView({
   column,
-  allColumns,
   onRemoveTask,
   onUpdateTask,
   onMoveTask,
@@ -79,7 +78,8 @@ export default function ColumnView({
       id: crypto.randomUUID(),
       title: taskData.title,
       description: taskData.description || undefined,
-      priority: taskData.priority
+      priority: taskData.priority,
+      urgency: taskData.urgency
     };
 
     onAddTask(column.id, nuovoTask);
@@ -153,7 +153,7 @@ export default function ColumnView({
 
       <button
         onClick={openModal}
-        className="w-full bg-gray-400 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md shadow cursor-pointer transition-colors text-sm mt-auto"
+        className="w-full bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-md shadow cursor-pointer transition-colors text-sm mt-auto"
       >
         + Aggiungi task
       </button>

@@ -6,14 +6,16 @@ import { Task } from "../types/board";
 export interface TaskFormData {
   title: string;
   description?: string;
-  priority: "bassa" | "media" | "alta";
+  priority: "importante" | "non-importante";
+  urgency: "urgente" | "non-urgente";
 }
 
 interface TaskFormBodyProps {
   initialValues?: {
     title: string;
     description?: string;
-    priority: "bassa" | "media" | "alta" | "";
+    priority: "importante" | "non-importante" | "";
+    urgency: "urgente" | "non-urgente" | "";
   };
   onSubmit: (data: TaskFormData) => boolean;
   children?: React.ReactNode;
@@ -30,21 +32,28 @@ export default function FormUpdateTask({
   const [description, setDescription] = useState(
     initialValues?.description || ""
   );
-  const [priority, setPriority] = useState<"bassa" | "media" | "alta" | "">(
-    initialValues?.priority || ""
+  const [priority, setPriority] = useState<
+    "importante" | "non-importante" | ""
+  >(initialValues?.priority || "");
+  const [urgency, setUrgency] = useState<"urgente" | "non-urgente" | "">(
+    initialValues?.urgency || ""
   );
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrors({});
-    const result = taskSchema.safeParse({ title, description, priority });
+    const result = taskSchema.safeParse({
+      title,
+      description,
+      priority,
+      urgency
+    });
 
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
       result.error.issues.forEach((issue) => {
-        const field = issue.path[0] as string;
-        fieldErrors[field] = issue.message;
+        fieldErrors[issue.path[0] as string] = issue.message;
       });
       setErrors(fieldErrors);
       return;
@@ -55,6 +64,7 @@ export default function FormUpdateTask({
       setTitle("");
       setDescription("");
       setPriority("");
+      setUrgency("");
       setErrors({});
     }
   };
@@ -93,10 +103,11 @@ export default function FormUpdateTask({
           )}
         </div>
       </div>
+
       <div className="flex flex-col gap-3">
         <div className="flex flex-col w-full gap-1 text-left">
           <label className="text-sm font-semibold text-gray-700 px-1">
-            Livello di Priorità
+            Importanza
           </label>
           <select
             value={priority}
@@ -106,12 +117,31 @@ export default function FormUpdateTask({
             <option value="" disabled hidden>
               Seleziona...
             </option>
-            <option value="bassa">Bassa</option>
-            <option value="media">Media</option>
-            <option value="alta">Alta</option>
+            <option value="importante">Importante</option>
+            <option value="non-importante">Non importante</option>
           </select>
           {errors.priority && (
             <span className="text-red-600 text-sm">{errors.priority}</span>
+          )}
+        </div>
+
+        <div className="flex flex-col w-full gap-1 text-left">
+          <label className="text-sm font-semibold text-gray-700 px-1">
+            Urgenza
+          </label>
+          <select
+            value={urgency}
+            onChange={(e) => setUrgency(e.target.value as Task["urgency"])}
+            className="border border-gray-300 rounded-md p-2 cursor-pointer bg-white text-gray-900"
+          >
+            <option value="" disabled hidden>
+              Seleziona...
+            </option>
+            <option value="urgente">Urgente</option>
+            <option value="non-urgente">Non urgente</option>
+          </select>
+          {errors.urgency && (
+            <span className="text-red-600 text-sm">{errors.urgency}</span>
           )}
         </div>
 

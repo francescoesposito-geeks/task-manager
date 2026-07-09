@@ -23,7 +23,8 @@ export default function TaskItem({
       ...task,
       title: data.title.trim(),
       description: data.description?.trim() || undefined,
-      priority: data.priority
+      priority: data.priority,
+      urgency: data.urgency
     });
     setIsEditing(false);
 

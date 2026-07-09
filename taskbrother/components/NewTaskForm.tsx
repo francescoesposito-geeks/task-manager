@@ -1,25 +1,32 @@
 "use client";
 import { useState } from "react";
-import { Column, Task } from "../types/board";
+import { Task } from "../types/board";
 import { taskSchema } from "../lib/schemas/task";
+import { getColumnIdFromTask } from "../utils/getColumnId";
 
 export interface NewTaskFormProps {
-  columns: Column[];
   onAddTask: (columnId: string, task: Task) => void;
 }
 
-export default function NewTaskForm({ columns, onAddTask }: NewTaskFormProps) {
+export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [priority, setPriority] = useState<"bassa" | "media" | "alta" | "">("");
-  const [columnId, setColumnId] = useState("");
+  const [priority, setPriority] = useState<
+    "importante" | "non-importante" | ""
+  >("");
+  const [urgency, setUrgency] = useState<"urgente" | "non-urgente" | "">("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
 
-    const result = taskSchema.safeParse({ title, description, priority });
+    const result = taskSchema.safeParse({
+      title,
+      description,
+      priority,
+      urgency
+    });
 
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
@@ -30,29 +37,30 @@ export default function NewTaskForm({ columns, onAddTask }: NewTaskFormProps) {
       return;
     }
 
-    if (!columnId) {
-      setErrors((prev) => ({ ...prev, columnId: "Seleziona una colonna" }));
-      return;
-    }
+    const columnId = getColumnIdFromTask(
+      result.data.priority,
+      result.data.urgency
+    );
 
     onAddTask(columnId, {
       id: crypto.randomUUID(),
       title: result.data.title,
       description: result.data.description || undefined,
-      priority: result.data.priority
+      priority: result.data.priority,
+      urgency: result.data.urgency
     });
 
     setTitle("");
     setDescription("");
     setPriority("");
-    setColumnId("");
+    setUrgency("");
     setErrors({});
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-6 border border-gray-300 rounded-lg shadow-xl bg-gray-50"
+      className="p-6 border-2 border-gray-300 rounded-lg shadow-xl bg-gray-50"
       noValidate
     >
       <h3 className="font-bold mb-4 text-lg">Nuova Task</h3>
@@ -74,21 +82,20 @@ export default function NewTaskForm({ columns, onAddTask }: NewTaskFormProps) {
 
         <div className="flex flex-col gap-1">
           <label className="text-sm font-semibold text-gray-700">
-            Livello di Priorità
+            Livello di Importanza
           </label>
           <select
             value={priority}
             onChange={(e) =>
-              setPriority(e.target.value as "bassa" | "media" | "alta")
+              setPriority(e.target.value as "importante" | "non-importante")
             }
             className="border border-gray-300 rounded-md p-2 bg-white cursor-pointer"
           >
             <option value="" disabled hidden>
               Seleziona...
             </option>
-            <option value="bassa">Bassa</option>
-            <option value="media">Media</option>
-            <option value="alta">Alta</option>
+            <option value="importante">Importante</option>
+            <option value="non-importante">Non importante</option>
           </select>
           {errors.priority && (
             <span className="text-red-600 text-sm">{errors.priority}</span>
@@ -111,25 +118,22 @@ export default function NewTaskForm({ columns, onAddTask }: NewTaskFormProps) {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-semibold text-gray-700">
-            Stato della Task
-          </label>
+          <label className="text-sm font-semibold text-gray-700">Urgenza</label>
           <select
-            value={columnId}
-            onChange={(e) => setColumnId(e.target.value)}
+            value={urgency}
+            onChange={(e) =>
+              setUrgency(e.target.value as "urgente" | "non-urgente")
+            }
             className="border border-gray-300 rounded-md p-2 bg-white cursor-pointer"
           >
-            <option value="" disabled>
+            <option value="" disabled hidden>
               Seleziona...
             </option>
-            {columns.map((col) => (
-              <option key={col.id} value={col.id}>
-                {col.title}
-              </option>
-            ))}
+            <option value="urgente">Urgente</option>
+            <option value="non-urgente">Non urgente</option>
           </select>
-          {errors.columnId && (
-            <span className="text-red-600 text-sm">{errors.columnId}</span>
+          {errors.urgency && (
+            <span className="text-red-600 text-sm">{errors.urgency}</span>
           )}
         </div>
       </div>

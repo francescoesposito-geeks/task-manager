@@ -5,17 +5,22 @@ import NewTaskForm from "./NewTaskForm";
 import NewColumnForm from "./NewColumnForm";
 import Board from "./Board";
 import { initialColumns } from "../data/initialColumns";
+import { useState } from "react";
+import BoardEisenhower from "../components/BoardEisenhower";
+import { getColumnIdFromTask } from "../utils/getColumnId";
 
 export default function BoardManager() {
   const [columns, setColumns, isLoaded] = useLocalStorage<Column[]>(
     "board",
     initialColumns
   );
+  const [isEisenhower, setIsEisenhower] = useState(false);
 
-  const handleAddTask = (columnId: string, nuovoTask: Task) => {
+  const handleAddTask = (task: Task) => {
+    const columnId = getColumnIdFromTask(task.priority, task.urgency);
     setColumns((prev) =>
       prev.map((col) =>
-        col.id === columnId ? { ...col, tasks: [...col.tasks, nuovoTask] } : col
+        col.id === columnId ? { ...col, tasks: [...col.tasks, task] } : col
       )
     );
   };
@@ -124,20 +129,42 @@ export default function BoardManager() {
     <div className="flex flex-col gap-12 p-6 mt-8">
       <div className="flex flex-wrap gap-12 justify-center">
         <NewTaskForm columns={columns} onAddTask={handleAddTask} />
-        <NewColumnForm onAddColumn={handleAddColumn} />
-      </div>
+        <div className="flex flex-col justify-between gap-10">
+          <NewColumnForm onAddColumn={handleAddColumn} />
 
-      <Board
-        columns={columns}
-        onRemoveTask={handleRemoveTask}
-        onUpdateTask={handleUpdateTask}
-        onMoveTask={handleMoveTask}
-        onRenameColumn={handleRenameColumn}
-        onDeleteColumn={handleDeleteColumn}
-        onMoveColumnLeft={handleMoveColumnLeft}
-        onMoveColumnRight={handleMoveColumnRight}
-        onAddTask={handleAddTask}
-      />
+          <button
+            onClick={() => setIsEisenhower(!isEisenhower)}
+            className="bg-white hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 min-w-72 cursor-pointer border border-gray-300 rounded-md shadow mb-6"
+          >
+            Cambia interfaccia
+          </button>
+        </div>
+      </div>
+      {isEisenhower ? (
+        <BoardEisenhower
+          columns={columns}
+          onRemoveTask={handleRemoveTask}
+          onUpdateTask={handleUpdateTask}
+          onMoveTask={handleMoveTask}
+          onRenameColumn={handleRenameColumn}
+          onDeleteColumn={handleDeleteColumn}
+          onMoveColumnLeft={handleMoveColumnLeft}
+          onMoveColumnRight={handleMoveColumnRight}
+          onAddTask={handleAddTask}
+        />
+      ) : (
+        <Board
+          columns={columns}
+          onRemoveTask={handleRemoveTask}
+          onUpdateTask={handleUpdateTask}
+          onMoveTask={handleMoveTask}
+          onRenameColumn={handleRenameColumn}
+          onDeleteColumn={handleDeleteColumn}
+          onMoveColumnLeft={handleMoveColumnLeft}
+          onMoveColumnRight={handleMoveColumnRight}
+          onAddTask={handleAddTask}
+        />
+      )}
     </div>
   );
 }

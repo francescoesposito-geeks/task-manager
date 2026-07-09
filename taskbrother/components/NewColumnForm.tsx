@@ -38,14 +38,14 @@ export default function NewColumnForm({ onAddColumn }: NewColumnFormProps) {
           htmlFor="columnName"
           className=" text-sm font-medium text-gray-900"
         >
-          Column Name
+          Nome Colonna
         </label>
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Nome colonna"
-          className="border border-gray-300 rounded-md p-2"
+          className="border border-gray-300 rounded-md p-2 bg-white"
         />
         {error && <span className="text-red-600 text-sm">{error}</span>}
       </div>
