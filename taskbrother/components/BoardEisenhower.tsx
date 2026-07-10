@@ -11,11 +11,10 @@ export interface BoardEisenhowerProps {
     toColumnId: string,
     taskId: string
   ) => void;
-  onRenameColumn: (columnId: string, newTitle: string) => void;
-  onDeleteColumn: (columnId: string) => void;
   onMoveColumnLeft: (columnId: string) => void;
   onMoveColumnRight: (columnId: string) => void;
   onAddTask: (columnId: string, task: Task) => void;
+  isEisenhower: boolean;
 }
 
 export default function BoardEisenhower({
@@ -23,11 +22,10 @@ export default function BoardEisenhower({
   onRemoveTask,
   onUpdateTask,
   onMoveTask,
-  onRenameColumn,
-  onDeleteColumn,
   onMoveColumnLeft,
   onMoveColumnRight,
-  onAddTask
+  onAddTask,
+  isEisenhower
 }: BoardEisenhowerProps) {
   return (
     <div className="grid grid-cols-2 gap-4 w-full">
@@ -39,11 +37,10 @@ export default function BoardEisenhower({
           onRemoveTask={onRemoveTask}
           onUpdateTask={onUpdateTask}
           onMoveTask={onMoveTask}
-          onRenameColumn={onRenameColumn}
-          onDeleteColumn={onDeleteColumn}
           onMoveColumnLeft={onMoveColumnLeft}
           onMoveColumnRight={onMoveColumnRight}
           onAddTask={onAddTask}
+          isEisenhower={isEisenhower}
         />
       ))}
     </div>

@@ -2,7 +2,7 @@
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { Column, Task } from "../types/board";
 import NewTaskForm from "./NewTaskForm";
-import NewColumnForm from "./NewColumnForm";
+
 import Board from "./Board";
 import { initialColumns } from "../data/initialColumns";
 import { useState } from "react";
@@ -16,7 +16,7 @@ export default function BoardManager() {
   );
   const [isEisenhower, setIsEisenhower] = useState(false);
 
-  const handleAddTask = (task: Task) => {
+  const handleAddTask = (_columnId: string, task: Task) => {
     const columnId = getColumnIdFromTask(task.priority, task.urgency);
     setColumns((prev) =>
       prev.map((col) =>
@@ -36,18 +36,40 @@ export default function BoardManager() {
   };
 
   const handleUpdateTask = (columnId: string, updatedTask: Task) => {
-    setColumns((prev) =>
-      prev.map((col) =>
-        col.id === columnId
-          ? {
-              ...col,
-              tasks: col.tasks.map((t) =>
-                t.id === updatedTask.id ? updatedTask : t
-              )
-            }
-          : col
-      )
+    const newColumnId = getColumnIdFromTask(
+      updatedTask.priority,
+      updatedTask.urgency
     );
+
+    if (columnId === newColumnId) {
+      setColumns((prev) =>
+        prev.map((col) =>
+          col.id === columnId
+            ? {
+                ...col,
+                tasks: col.tasks.map((task) =>
+                  task.id === updatedTask.id ? updatedTask : task
+                )
+              }
+            : col
+        )
+      );
+    } else {
+      setColumns((prev) =>
+        prev.map((col) => {
+          if (col.id === columnId) {
+            return {
+              ...col,
+              tasks: col.tasks.filter((task) => task.id !== updatedTask.id)
+            };
+          }
+          if (col.id === newColumnId) {
+            return { ...col, tasks: [...col.tasks, updatedTask] };
+          }
+          return col;
+        })
+      );
+    }
   };
 
   const handleMoveTask = (
@@ -72,25 +94,6 @@ export default function BoardManager() {
         return col;
       });
     });
-  };
-
-  const handleAddColumn = (title: string) => {
-    setColumns((prev) => [
-      ...prev,
-      { id: crypto.randomUUID(), title, tasks: [] }
-    ]);
-  };
-
-  const handleRenameColumn = (columnId: string, newTitle: string) => {
-    setColumns((prev) =>
-      prev.map((col) =>
-        col.id === columnId ? { ...col, title: newTitle } : col
-      )
-    );
-  };
-
-  const handleDeleteColumn = (columnId: string) => {
-    setColumns((prev) => prev.filter((col) => col.id !== columnId));
   };
 
   const handleMoveColumnLeft = (columnId: string) => {
@@ -122,23 +125,19 @@ export default function BoardManager() {
   };
 
   if (!isLoaded) {
-    return <div className="p-6 text-center text-gray-500">Caricamento...</div>;
+    return <div className="p-10 text-center text-gray-800">Caricamento...</div>;
   }
 
   return (
-    <div className="flex flex-col gap-12 p-6 mt-8">
-      <div className="flex flex-wrap gap-12 justify-center">
-        <NewTaskForm columns={columns} onAddTask={handleAddTask} />
-        <div className="flex flex-col justify-between gap-10">
-          <NewColumnForm onAddColumn={handleAddColumn} />
-
-          <button
-            onClick={() => setIsEisenhower(!isEisenhower)}
-            className="bg-white hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 min-w-72 cursor-pointer border border-gray-300 rounded-md shadow mb-6"
-          >
-            Cambia interfaccia
-          </button>
-        </div>
+    <div className="flex flex-col items-center gap-12 p-1 mt-8">
+      <div className="flex flex-col flex-wrap gap-12 justify-center max-w-7xl">
+        <NewTaskForm onAddTask={handleAddTask} />
+        <button
+          onClick={() => setIsEisenhower(!isEisenhower)}
+          className="bg-white hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 min-w-72 cursor-pointer border border-gray-300 rounded-md shadow mb-6"
+        >
+          Cambia interfaccia
+        </button>
       </div>
       {isEisenhower ? (
         <BoardEisenhower
@@ -146,11 +145,10 @@ export default function BoardManager() {
           onRemoveTask={handleRemoveTask}
           onUpdateTask={handleUpdateTask}
           onMoveTask={handleMoveTask}
-          onRenameColumn={handleRenameColumn}
-          onDeleteColumn={handleDeleteColumn}
           onMoveColumnLeft={handleMoveColumnLeft}
           onMoveColumnRight={handleMoveColumnRight}
           onAddTask={handleAddTask}
+          isEisenhower={isEisenhower}
         />
       ) : (
         <Board
@@ -158,8 +156,6 @@ export default function BoardManager() {
           onRemoveTask={handleRemoveTask}
           onUpdateTask={handleUpdateTask}
           onMoveTask={handleMoveTask}
-          onRenameColumn={handleRenameColumn}
-          onDeleteColumn={handleDeleteColumn}
           onMoveColumnLeft={handleMoveColumnLeft}
           onMoveColumnRight={handleMoveColumnRight}
           onAddTask={handleAddTask}

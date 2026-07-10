@@ -15,6 +15,9 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
     "importante" | "non-importante" | ""
   >("");
   const [urgency, setUrgency] = useState<"urgente" | "non-urgente" | "">("");
+  const [state, setState] = useState<
+    "to-do" | "doing" | "testing" | "done" | ""
+  >("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -25,7 +28,8 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
       title,
       description,
       priority,
-      urgency
+      urgency,
+      state
     });
 
     if (!result.success) {
@@ -47,13 +51,15 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
       title: result.data.title,
       description: result.data.description || undefined,
       priority: result.data.priority,
-      urgency: result.data.urgency
+      urgency: result.data.urgency,
+      state: result.data.state
     });
 
     setTitle("");
     setDescription("");
     setPriority("");
     setUrgency("");
+    setState("");
     setErrors({});
   };
 
@@ -82,7 +88,7 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
 
         <div className="flex flex-col gap-1">
           <label className="text-sm font-semibold text-gray-700">
-            Livello di Importanza
+            Importanza
           </label>
           <select
             value={priority}
@@ -118,7 +124,9 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-semibold text-gray-700">Urgenza</label>
+          <label className="text-sm font-semibold text-gray-700">
+            Priorità
+          </label>
           <select
             value={urgency}
             onChange={(e) =>
@@ -134,6 +142,27 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
           </select>
           {errors.urgency && (
             <span className="text-red-600 text-sm">{errors.urgency}</span>
+          )}
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-semibold text-gray-700">Stato</label>
+          <select
+            value={state}
+            onChange={(e) =>
+              setState(e.target.value as "to-do" | "doing" | "testing" | "done")
+            }
+            className="border border-gray-300 rounded-md p-2 bg-white cursor-pointer"
+          >
+            <option value="" disabled hidden>
+              Seleziona...
+            </option>
+            <option value="to-do">To do</option>
+            <option value="doing">Doing</option>
+            <option value="testing">Testing</option>
+            <option value="done">Done</option>
+          </select>
+          {errors.state && (
+            <span className="text-red-600 text-sm">{errors.state}</span>
           )}
         </div>
       </div>

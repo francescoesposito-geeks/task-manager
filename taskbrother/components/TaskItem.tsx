@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
-import { Column, Task } from "../types/board";
-import FormBody, { TaskFormData } from "./FormUpdateTask";
+import { Task } from "../types/board";
+import FormUpdateTask, { TaskFormData } from "./FormUpdateTask";
 
 export interface TaskItemProps {
   task: Task;
@@ -24,7 +24,8 @@ export default function TaskItem({
       title: data.title.trim(),
       description: data.description?.trim() || undefined,
       priority: data.priority,
-      urgency: data.urgency
+      urgency: data.urgency,
+      state: data.state
     });
     setIsEditing(false);
 
@@ -38,7 +39,7 @@ export default function TaskItem({
   if (isEditing) {
     return (
       <li className="flex flex-col p-4  text-center gap-3 border border-gray-300 rounded-lg shadow bg-white list-none">
-        <FormBody
+        <FormUpdateTask
           initialValues={task}
           onSubmit={handleSave}
           className="flex flex-col gap-4"
@@ -57,7 +58,7 @@ export default function TaskItem({
               Annulla
             </button>
           </div>
-        </FormBody>
+        </FormUpdateTask>
       </li>
     );
   }
@@ -86,17 +87,16 @@ export default function TaskItem({
         </button>
       </div>
 
-      <h3 className="font-bold border-b border-gray-200 pb-2">{task.title}</h3>
+      <h3 className="font-bold border-b border-gray-200 pb-2 wrap-break-word">
+        {task.title}
+      </h3>
 
       {task.description && (
-        <p className="text-sm text-gray-600 border-b border-gray-200 pb-2">
+        <p className="text-sm text-gray-600 pb-4 wrap-break-word border-b border-gray-200">
           {task.description}
         </p>
       )}
-
-      <span className="text-xs uppercase tracking-wide text-gray-500">
-        {task.priority}
-      </span>
+      <h4 className="text-sm text-gray-600">{task.state}</h4>
 
       <button
         onClick={() => setIsEditing(true)}

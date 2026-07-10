@@ -2,11 +2,12 @@
 import { useState, useRef } from "react";
 import { Column, Task } from "../types/board";
 import TaskItem from "./TaskItem";
-import FormBody, { TaskFormData } from "./FormUpdateTask";
+import { TaskFormData } from "./FormUpdateTask";
 
 export interface ColumnViewProps {
   column: Column;
   allColumns: Column[];
+  isEisenhower?: boolean;
   onRemoveTask: (columnId: string, taskId: string) => void;
   onUpdateTask: (columnId: string, task: Task) => void;
   onMoveTask: (
@@ -14,8 +15,6 @@ export interface ColumnViewProps {
     toColumnId: string,
     taskId: string
   ) => void;
-  onRenameColumn: (columnId: string, newTitle: string) => void;
-  onDeleteColumn: (columnId: string) => void;
   onMoveColumnLeft: (columnId: string) => void;
   onMoveColumnRight: (columnId: string) => void;
   onAddTask: (columnId: string, task: Task) => void;
@@ -26,28 +25,26 @@ export default function ColumnView({
   onRemoveTask,
   onUpdateTask,
   onMoveTask,
-  onRenameColumn,
-  onDeleteColumn,
   onMoveColumnLeft,
   onMoveColumnRight,
-  onAddTask
+  onAddTask,
+  isEisenhower
 }: ColumnViewProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState(column.title);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [priority, setPriority] = useState<
+    "importante" | "non-importante" | ""
+  >("");
+  const [urgency, setUrgency] = useState<"urgente" | "non-urgente" | "">("");
+  const [state, setState] = useState<
+    "to-do" | "doing" | "testing" | "done" | ""
+  >("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const dialogRef = useRef<HTMLDialogElement>(null);
-
-  const sortedTasks = [...column.tasks].sort(
-    (a, b) => priorityWeight[b.priority] - priorityWeight[a.priority]
-  );
-
-  const handleSaveTitle = () => {
-    const trimmed = titleDraft.trim();
-    if (trimmed) onRenameColumn(column.id, trimmed);
-    else setTitleDraft(column.title);
-    setIsEditingTitle(false);
-  };
 
   const handleDragOver = (e: React.DragEvent) => e.preventDefault();
   const handleDragEnter = () => setIsDragOver(true);
@@ -79,7 +76,8 @@ export default function ColumnView({
       title: taskData.title,
       description: taskData.description || undefined,
       priority: taskData.priority,
-      urgency: taskData.urgency
+      urgency: taskData.urgency,
+      state: taskData.state
     };
 
     onAddTask(column.id, nuovoTask);
@@ -93,7 +91,7 @@ export default function ColumnView({
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`flex flex-col w-72 shrink-0 rounded-lg p-4 max-h-[80vh] transition-all duration-200 shadow-xl ${
+      className={`flex flex-col max-w-72 md:max-w-80 shrink-0 rounded-lg p-4 max-h-[80vh] transition-all duration-200 shadow-xl ${
         isDragOver
           ? "bg-gray-200 border border-blue-400"
           : "bg-gray-50 border border-transparent"
@@ -105,8 +103,6 @@ export default function ColumnView({
             autoFocus
             value={titleDraft}
             onChange={(e) => setTitleDraft(e.target.value)}
-            onBlur={handleSaveTitle}
-            onKeyDown={(e) => e.key === "Enter" && handleSaveTitle()}
             className="border border-gray-300 rounded-md p-1 font-bold w-full"
           />
         ) : (
@@ -117,7 +113,7 @@ export default function ColumnView({
             {column.title}
           </h2>
         )}
-        <div className="flex items-center content-center gap-5">
+        <div className="flex items-center content-center gap-1">
           <button
             onClick={() => onMoveColumnLeft(column.id)}
             className="text-gray-400 hover:text-gray-800 text-sm font-bold cursor-pointer"
@@ -130,17 +126,11 @@ export default function ColumnView({
           >
             ▶
           </button>
-          <button
-            onClick={() => onDeleteColumn(column.id)}
-            className="text-gray-500 hover:text-red-600 text-xl shrink-0 cursor-pointer"
-          >
-            x
-          </button>
         </div>
       </div>
 
       <ul className="flex flex-col gap-4 overflow-y-auto flex-1 mb-4">
-        {sortedTasks.map((task) => (
+        {column.tasks.map((task) => (
           <TaskItem
             key={task.id}
             task={task}
@@ -153,7 +143,7 @@ export default function ColumnView({
 
       <button
         onClick={openModal}
-        className="w-full bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-md shadow cursor-pointer transition-colors text-sm mt-auto"
+        className="w-full bg-gray-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow cursor-pointer transition-colors text-sm mt-auto"
       >
         + Aggiungi task
       </button>
@@ -174,23 +164,21 @@ export default function ColumnView({
           </button>
         </div>
 
-        <FormBody onSubmit={handleFormSubmit} className="flex flex-col gap-4">
-          <div className="flex gap-2 justify-center mt-4">
-            <button
-              type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md text-sm font-semibold cursor-pointer"
-            >
-              Conferma
-            </button>
-            <button
-              type="button"
-              onClick={closeModal}
-              className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-md text-sm font-semibold cursor-pointer"
-            >
-              Annulla
-            </button>
-          </div>
-        </FormBody>
+        <div className="flex gap-2 justify-center mt-4">
+          <button
+            type="submit"
+            className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md text-sm font-semibold cursor-pointer"
+          >
+            Conferma
+          </button>
+          <button
+            type="button"
+            onClick={closeModal}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-md text-sm font-semibold cursor-pointer"
+          >
+            Annulla
+          </button>
+        </div>
       </dialog>
     </div>
   );

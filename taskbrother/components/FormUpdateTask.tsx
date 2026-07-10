@@ -8,14 +8,16 @@ export interface TaskFormData {
   description?: string;
   priority: "importante" | "non-importante";
   urgency: "urgente" | "non-urgente";
+  state: "to-do" | "doing" | "testing" | "done";
 }
 
-interface TaskFormBodyProps {
+interface FormUpdateTaskProps {
   initialValues?: {
     title: string;
     description?: string;
     priority: "importante" | "non-importante" | "";
     urgency: "urgente" | "non-urgente" | "";
+    state: "to-do" | "doing" | "testing" | "done";
   };
   onSubmit: (data: TaskFormData) => boolean;
   children?: React.ReactNode;
@@ -27,7 +29,7 @@ export default function FormUpdateTask({
   onSubmit,
   children,
   className
-}: TaskFormBodyProps) {
+}: FormUpdateTaskProps) {
   const [title, setTitle] = useState(initialValues?.title || "");
   const [description, setDescription] = useState(
     initialValues?.description || ""
@@ -38,6 +40,9 @@ export default function FormUpdateTask({
   const [urgency, setUrgency] = useState<"urgente" | "non-urgente" | "">(
     initialValues?.urgency || ""
   );
+  const [state, setState] = useState<
+    "to-do" | "doing" | "testing" | "done" | ""
+  >(initialValues?.state || "");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -47,7 +52,8 @@ export default function FormUpdateTask({
       title,
       description,
       priority,
-      urgency
+      urgency,
+      state
     });
 
     if (!result.success) {
@@ -65,6 +71,7 @@ export default function FormUpdateTask({
       setDescription("");
       setPriority("");
       setUrgency("");
+      setState("");
       setErrors({});
     }
   };
@@ -142,6 +149,27 @@ export default function FormUpdateTask({
           </select>
           {errors.urgency && (
             <span className="text-red-600 text-sm">{errors.urgency}</span>
+          )}
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-semibold text-gray-700">Stato</label>
+          <select
+            value={state}
+            onChange={(e) =>
+              setState(e.target.value as "to-do" | "doing" | "testing" | "done")
+            }
+            className="border border-gray-300 rounded-md p-2 bg-white cursor-pointer"
+          >
+            <option value="" disabled hidden>
+              Seleziona...
+            </option>
+            <option value="urgente">To do</option>
+            <option value="doing">Doing</option>
+            <option value="testing">Testing</option>
+            <option value="done">Done</option>
+          </select>
+          {errors.state && (
+            <span className="text-red-600 text-sm">{errors.state}</span>
           )}
         </div>
 
