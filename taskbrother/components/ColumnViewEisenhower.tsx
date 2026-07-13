@@ -28,8 +28,6 @@ export default function ColumnViewEisenhower({
   tasksList,
   isEisenhower
 }: ColumnViewEisenhowerProps) {
-  const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [titleDraft, setTitleDraft] = useState(column.title);
   const [isDragOver, setIsDragOver] = useState(false);
 
   const handleDragOver = (e: React.DragEvent) => e.preventDefault();
@@ -61,22 +59,12 @@ export default function ColumnViewEisenhower({
       }`}
     >
       <div className="flex justify-between items-center mb-4 gap-2">
-        {isEditingTitle ? (
-          <input
-            autoFocus
-            value={titleDraft}
-            onChange={(e) => setTitleDraft(e.target.value)}
-            className="border border-gray-300 rounded-md p-1 font-bold w-full"
-          />
-        ) : (
-          <h2
-            className="font-bold cursor-pointer"
-            onClick={() => setIsEditingTitle(true)}
-          >
-            {column.title}
-          </h2>
-        )}
-        <div className="flex items-center content-center gap-1">
+        <h2 className="font-bold cursor-pointer">{column.title}</h2>
+
+        <div className="flex items-center content-center gap-3">
+          <span className=" text-black text-sm font-bold px-2 py-0.5">
+            {tasksList.length}
+          </span>
           <button
             onClick={() => onMoveColumnLeft(column.id)}
             className="text-gray-400 hover:text-gray-800 text-sm font-bold cursor-pointer"

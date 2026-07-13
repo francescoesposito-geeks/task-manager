@@ -22,15 +22,15 @@ export const initialColumnsTrello: Column[] = [
   { id: "blocked", title: "Blocked" },
   {
     id: "doing",
-    title: "doing"
+    title: "Doing"
   },
   {
     id: "testing",
-    title: "testing"
+    title: "Testing"
   },
 
   {
     id: "done",
-    title: "done"
+    title: "Done"
   }
 ];

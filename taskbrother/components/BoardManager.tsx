@@ -9,7 +9,7 @@ import {
 } from "../data/initialColumns";
 import { useState } from "react";
 import BoardEisenhower from "../components/BoardEisenhower";
-import { getColumnIdFromTask, getPriorityUrgency } from "../utils/getColumnId";
+import { getPriorityUrgency } from "../utils/getColumnId";
 import { Columns3, LayoutGrid } from "lucide-react";
 
 export default function BoardManager() {
@@ -20,7 +20,6 @@ export default function BoardManager() {
     useLocalStorage<Column[]>("boardEisenhower", initialColumnsEisenhower);
   const [isEisenhower, setIsEisenhower] = useState(false);
   const [tasks, setTasks, isLoadedTasks] = useLocalStorage<Task[]>("tasks", []);
-  const columns = isEisenhower ? columnsEisenhower : columnsTrello;
   const setColumns = isEisenhower ? setColumnsEisenhower : setColumnsTrello;
 
   const handleAddTask = (item: Task) => {

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Task } from "../types/board";
 import FormUpdateTask from "./FormUpdateTask";
 import { TaskFormData } from "../lib/schemas/task";
+import { isDeadlineUrgent, getDaysUntilDeadline } from "../utils/deadLine";
 
 export interface TaskItemProps {
   task: Task;
@@ -20,6 +21,8 @@ export default function TaskItem({
   isEisenhower
 }: TaskItemProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const urgent = task.deadline ? isDeadlineUrgent(task.deadline) : false;
+  const daysLeft = task.deadline ? getDaysUntilDeadline(task.deadline) : null;
 
   const handleSave = (data: TaskFormData) => {
     onUpdate({
@@ -70,7 +73,9 @@ export default function TaskItem({
 
   return (
     <li
-      className="flex flex-col p-4 text-center gap-3 border border-gray-300 rounded-lg shadow bg-white list-none"
+      className={`flex flex-col p-4 text-center gap-3 rounded-lg shadow list-none border ${
+        urgent ? "border-red-300 bg-red-50" : "border-gray-300 bg-white"
+      }`}
       draggable="true"
       onDragStart={(e) => {
         e.dataTransfer.setData(
@@ -86,7 +91,7 @@ export default function TaskItem({
       <div className="flex justify-end">
         <button
           onClick={() => onRemove(task.id)}
-          className="flex items-center justify-center cursor-pointer w-6 h-6 bg-gray-600 hover:bg-gray-800 text-white rounded-full text-sm"
+          className="flex items-center justify-center cursor-pointer w-6 h-6 bg-gray-500 hover:bg-gray-700 text-white rounded-full text-sm"
         >
           x
         </button>
@@ -107,11 +112,17 @@ export default function TaskItem({
           {task.state}
         </h4>
       ) : (
-        <div className="flex justify-center p-2">
+        <div className="flex justify-center p-4 border-b border-gray-200">
           <span className="text-sm text-gray-600 uppercase border border-gray-300 rounded px-2 py-1 bg-gray-100">
             {task.priority} & {task.urgency}
           </span>
         </div>
+      )}
+      {task.deadline && (
+        <p className="text-sm text-gray-600 pb-4 wrap-break-word">
+          <span className="uppercase font-bold">deadline: </span>
+          {new Date(task.deadline).toLocaleDateString("it-IT")}
+        </p>
       )}
 
       <button
