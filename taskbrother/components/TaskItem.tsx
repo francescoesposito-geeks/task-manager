@@ -9,13 +9,15 @@ export interface TaskItemProps {
   currentColumnId: string;
   onRemove: (id: string) => void;
   onUpdate: (updatedTask: Task) => void;
+  isEisenhower: boolean;
 }
 
 export default function TaskItem({
   task,
   currentColumnId,
   onRemove,
-  onUpdate
+  onUpdate,
+  isEisenhower
 }: TaskItemProps) {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -26,7 +28,8 @@ export default function TaskItem({
       description: data.description?.trim() || undefined,
       priority: data.priority,
       urgency: data.urgency,
-      state: data.state
+      state: data.state,
+      deadline: data.deadline || undefined
     });
     setIsEditing(false);
 
@@ -98,7 +101,18 @@ export default function TaskItem({
           {task.description}
         </p>
       )}
-      <h4 className="text-sm text-gray-600 uppercase">{task.state}</h4>
+
+      {isEisenhower ? (
+        <h4 className="text-sm text-gray-600 uppercase border border-gray-300 rounded px-2 py-1 bg-gray-100">
+          {task.state}
+        </h4>
+      ) : (
+        <div className="flex justify-center p-2">
+          <span className="text-sm text-gray-600 uppercase border border-gray-300 rounded px-2 py-1 bg-gray-100">
+            {task.priority} & {task.urgency}
+          </span>
+        </div>
+      )}
 
       <button
         onClick={() => setIsEditing(true)}

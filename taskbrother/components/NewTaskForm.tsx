@@ -16,8 +16,9 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
   >("");
   const [urgency, setUrgency] = useState<"urgente" | "non-urgente" | "">("");
   const [state, setState] = useState<
-    "to-do" | "doing" | "testing" | "done" | ""
+    "to-do" | "doing" | "testing" | "done" | "" | "blocked"
   >("");
+  const [deadline, setDeadline] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -29,7 +30,8 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
       description,
       priority,
       urgency,
-      state
+      state,
+      deadline
     });
 
     if (!result.success) {
@@ -52,7 +54,8 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
       description: result.data.description || undefined,
       priority: result.data.priority,
       urgency: result.data.urgency,
-      state: result.data.state
+      state: result.data.state,
+      deadline: result.data.deadline || undefined
     };
 
     onAddTask(newTask);
@@ -62,6 +65,7 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
     setPriority("");
     setUrgency("");
     setState("");
+    setDeadline("");
     setErrors({});
   };
 
@@ -75,7 +79,7 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
       <div className="grid grid-cols-2 gap-x-6 gap-y-4">
         <div className="flex flex-col gap-1">
           <label className="text-sm font-semibold text-gray-700">
-            Titolo del Task
+            Titolo del Task*
           </label>
           <input
             value={title}
@@ -90,7 +94,7 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
 
         <div className="flex flex-col gap-1">
           <label className="text-sm font-semibold text-gray-700">
-            Importanza
+            Importanza*
           </label>
           <select
             value={priority}
@@ -127,7 +131,7 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
 
         <div className="flex flex-col gap-1">
           <label className="text-sm font-semibold text-gray-700">
-            Priorità
+            Priorità*
           </label>
           <select
             value={urgency}
@@ -147,11 +151,32 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
           )}
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-semibold text-gray-700">Stato</label>
+          <label className="text-sm font-semibold text-gray-700">
+            Scadenza
+          </label>
+          <input
+            type="date"
+            value={deadline}
+            onChange={(e) => setDeadline(e.target.value)}
+            className="border border-gray-300 rounded-md p-2 bg-white cursor-pointer"
+          />
+          {errors.deadline && (
+            <span className="text-red-600 text-sm">{errors.deadline}</span>
+          )}
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-semibold text-gray-700">Stato*</label>
           <select
             value={state}
             onChange={(e) =>
-              setState(e.target.value as "to-do" | "doing" | "testing" | "done")
+              setState(
+                e.target.value as
+                  | "to-do"
+                  | "doing"
+                  | "testing"
+                  | "done"
+                  | "blocked"
+              )
             }
             className="border border-gray-300 rounded-md p-2 bg-white cursor-pointer"
           >
@@ -161,6 +186,7 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
             <option value="to-do">To do</option>
             <option value="doing">Doing</option>
             <option value="testing">Testing</option>
+            <option value="blocked">Blocked</option>
             <option value="done">Done</option>
           </select>
           {errors.state && (

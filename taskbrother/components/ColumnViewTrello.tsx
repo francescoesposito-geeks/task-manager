@@ -5,7 +5,7 @@ import TaskItem from "./TaskItem";
 
 export interface ColumnViewTrelloProps {
   column: Column;
-  isEisenhower?: boolean;
+  isEisenhower: boolean;
   onRemoveTask: (taskId: string) => void;
   onUpdateTask: (task: Task) => void;
   onMoveTask: (
@@ -25,7 +25,8 @@ export default function ColumnViewTrello({
   onUpdateTask,
   onMoveTask,
   onMoveColumnLeft,
-  onMoveColumnRight
+  onMoveColumnRight,
+  isEisenhower
 }: ColumnViewTrelloProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState(column.title);
@@ -53,7 +54,7 @@ export default function ColumnViewTrello({
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`flex flex-col max-w-72 md:max-w-80 shrink-0 rounded-lg p-4 max-h-[80vh] transition-all duration-200 shadow-xl ${
+      className={`flex flex-col min-w-72 md:max-w-80 shrink-0 rounded-lg p-4 max-h-[80vh] transition-all duration-200 shadow-xl ${
         isDragOver
           ? "bg-gray-200 border border-blue-400"
           : "bg-gray-50 border border-transparent"
@@ -99,6 +100,7 @@ export default function ColumnViewTrello({
             currentColumnId={column.id}
             onRemove={(taskId) => onRemoveTask(taskId)}
             onUpdate={(updatedTask) => onUpdateTask(updatedTask)}
+            isEisenhower={isEisenhower ?? false}
           />
         ))}
       </ul>

@@ -10,6 +10,7 @@ interface FormUpdateTaskProps {
     priority: "importante" | "non-importante" | "";
     urgency: "urgente" | "non-urgente" | "";
     state: "to-do" | "doing" | "testing" | "done" | "blocked";
+    deadline?: string;
   };
   onSubmit: (data: TaskFormData) => boolean;
   children?: React.ReactNode;
@@ -35,6 +36,7 @@ export default function FormUpdateTask({
   const [state, setState] = useState<
     "to-do" | "doing" | "testing" | "done" | "blocked" | ""
   >(initialValues?.state || "");
+  const [deadline, setDeadline] = useState(initialValues?.deadline || "");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -45,7 +47,8 @@ export default function FormUpdateTask({
       description,
       priority,
       urgency,
-      state
+      state,
+      deadline
     });
 
     if (!result.success) {
@@ -64,6 +67,7 @@ export default function FormUpdateTask({
       setPriority("");
       setUrgency("");
       setState("");
+      setDeadline("");
       setErrors({});
     }
   };
@@ -143,7 +147,7 @@ export default function FormUpdateTask({
             <span className="text-red-600 text-sm">{errors.urgency}</span>
           )}
         </div>
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col w-full gap-1 text-left">
           <label className="text-sm font-semibold text-gray-700">Stato</label>
           <select
             value={state}
@@ -163,6 +167,20 @@ export default function FormUpdateTask({
           </select>
           {errors.state && (
             <span className="text-red-600 text-sm">{errors.state}</span>
+          )}
+        </div>
+        <div className="flex flex-col gap-1 text-left">
+          <label className="text-sm font-semibold text-gray-700">
+            Scadenza
+          </label>
+          <input
+            type="date"
+            value={deadline}
+            onChange={(e) => setDeadline(e.target.value)}
+            className="border border-gray-300 rounded-md p-2 bg-white cursor-pointer text-gray-900"
+          />
+          {errors.deadline && (
+            <span className="text-red-600 text-sm">{errors.deadline}</span>
           )}
         </div>
 

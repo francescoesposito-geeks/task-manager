@@ -121,6 +121,7 @@ export default function BoardManager() {
           onMoveTask={handleMoveTask}
           onMoveColumnLeft={handleMoveColumnLeft}
           onMoveColumnRight={handleMoveColumnRight}
+          isEisenhower={isEisenhower}
         />
       )}
     </div>

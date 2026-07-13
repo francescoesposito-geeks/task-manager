@@ -14,6 +14,7 @@ export interface BoardTrelloProps {
   onMoveColumnLeft: (columnId: string) => void;
   onMoveColumnRight: (columnId: string) => void;
   tasks: Task[];
+  isEisenhower: boolean;
 }
 
 export default function BoardTrello({
@@ -23,7 +24,8 @@ export default function BoardTrello({
   onMoveTask,
   onMoveColumnLeft,
   onMoveColumnRight,
-  tasks
+  tasks,
+  isEisenhower
 }: BoardTrelloProps) {
   return (
     <div className="flex overflow-x-auto gap-6 items-start w-full">
@@ -37,6 +39,7 @@ export default function BoardTrello({
           onMoveTask={onMoveTask}
           onMoveColumnLeft={onMoveColumnLeft}
           onMoveColumnRight={onMoveColumnRight}
+          isEisenhower={isEisenhower}
         />
       ))}
     </div>

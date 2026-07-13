@@ -5,7 +5,7 @@ import TaskItem from "./TaskItem";
 
 export interface ColumnViewEisenhowerProps {
   column: Column;
-  isEisenhower?: boolean;
+  isEisenhower: boolean;
   onRemoveTask: (taskId: string) => void;
   onUpdateTask: (task: Task) => void;
   onMoveTask: (
@@ -25,7 +25,8 @@ export default function ColumnViewEisenhower({
   onMoveTask,
   onMoveColumnLeft,
   onMoveColumnRight,
-  tasksList
+  tasksList,
+  isEisenhower
 }: ColumnViewEisenhowerProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState(column.title);
@@ -99,6 +100,7 @@ export default function ColumnViewEisenhower({
             currentColumnId={column.id}
             onRemove={(taskId) => onRemoveTask(taskId)}
             onUpdate={(updatedTask) => onUpdateTask(updatedTask)}
+            isEisenhower={isEisenhower ?? false}
           />
         ))}
       </ul>

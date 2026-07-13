@@ -1,5 +1,6 @@
 "use client";
 import { Column, Task } from "../types/board";
+import { getColumnIdFromTask } from "../utils/getColumnId";
 import ColumnViewEisenhower from "./ColumnViewEisenhower";
 
 export interface BoardEisenhowerProps {
@@ -31,7 +32,10 @@ export default function BoardEisenhower({
     <div className="grid grid-cols-2 gap-4 w-full">
       {columns.map((column) => (
         <ColumnViewEisenhower
-          tasksList={tasks.filter((item) => item.state === column.id)}
+          tasksList={tasks.filter(
+            (item) =>
+              getColumnIdFromTask(item.priority, item.urgency) === column.id
+          )}
           key={column.id}
           column={column}
           onRemoveTask={onRemoveTask}
