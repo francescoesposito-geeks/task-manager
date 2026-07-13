@@ -5,8 +5,8 @@ export const taskSchema = z.object({
     .string()
     .trim()
     .min(1, "Il titolo è obbligatorio")
-    .max(25, "Max 25 caratteri"),
-  description: z.string().trim().max(200).optional().or(z.literal("")),
+    .max(50, "Max 50 caratteri"),
+  description: z.string().trim().max(250).optional().or(z.literal("")),
   priority: z.enum(["importante", "non-importante"], {
     message: "Seleziona un livello di importanza"
   }),

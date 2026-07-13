@@ -29,7 +29,7 @@ export default function BoardEisenhower({
   tasks
 }: BoardEisenhowerProps) {
   return (
-    <div className="grid grid-cols-2 gap-4 w-full">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
       {columns.map((column) => (
         <ColumnViewEisenhower
           tasksList={tasks.filter(

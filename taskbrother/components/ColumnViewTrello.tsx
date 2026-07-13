@@ -54,7 +54,7 @@ export default function ColumnViewTrello({
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`flex flex-col min-w-72 md:max-w-80 shrink-0 rounded-lg p-4 max-h-[80vh] transition-all duration-200 shadow-xl ${
+      className={`flex flex-col min-w-72 md:max-w-80 min-h-96 shrink-0 rounded-lg p-4 bg-gray-100 transition-all duration-200 shadow-xl ${
         isDragOver
           ? "bg-gray-200 border border-blue-400"
           : "bg-gray-50 border border-transparent"

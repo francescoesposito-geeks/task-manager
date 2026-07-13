@@ -54,7 +54,7 @@ export default function ColumnViewEisenhower({
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`flex flex-col max-w-72 md:max-w-80 shrink-0 rounded-lg p-4 max-h-[80vh] transition-all duration-200 shadow-xl ${
+      className={`flex flex-col shrink-0 rounded-lg p-4 bg-gray-200 transition-all duration-200 shadow-xl ${
         isDragOver
           ? "bg-gray-200 border border-blue-400"
           : "bg-gray-50 border border-transparent"
@@ -92,7 +92,7 @@ export default function ColumnViewEisenhower({
         </div>
       </div>
 
-      <ul className="flex flex-col gap-4 overflow-y-auto flex-1 mb-4">
+      <ul className="overflow-y-auto flex-1 mb-4 min-h-72 grid grid-cols-1 lg:grid-cols-2 gap-4 w-full bg-gray-200 rounded-lg">
         {tasksList.map((task) => (
           <TaskItem
             key={task.id}
