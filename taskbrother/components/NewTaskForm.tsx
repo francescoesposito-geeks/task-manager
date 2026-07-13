@@ -5,7 +5,7 @@ import { taskSchema } from "../lib/schemas/task";
 import { getColumnIdFromTask } from "../utils/getColumnId";
 
 export interface NewTaskFormProps {
-  onAddTask: (columnId: string, task: Task) => void;
+  onAddTask: (task: Task) => void;
 }
 
 export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
@@ -41,19 +41,21 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
       return;
     }
 
-    const columnId = getColumnIdFromTask(
-      result.data.priority,
-      result.data.urgency
-    );
+    // const columnId = getColumnIdFromTask(
+    //   result.data.priority,
+    //   result.data.urgency
+    // );
 
-    onAddTask(columnId, {
+    let newTask = {
       id: crypto.randomUUID(),
       title: result.data.title,
       description: result.data.description || undefined,
       priority: result.data.priority,
       urgency: result.data.urgency,
       state: result.data.state
-    });
+    };
+
+    onAddTask(newTask);
 
     setTitle("");
     setDescription("");

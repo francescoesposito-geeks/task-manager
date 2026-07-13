@@ -13,7 +13,7 @@ export const taskSchema = z.object({
   urgency: z.enum(["urgente", "non-urgente"], {
     message: "Seleziona il livello di urgenza"
   }),
-  state: z.enum(["to-do", "doing", "testing", "done"], {
+  state: z.enum(["to-do", "doing", "testing", "done", "blocked"], {
     message: "Seleziona lo stato"
   })
 });

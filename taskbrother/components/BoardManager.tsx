@@ -2,74 +2,39 @@
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { Column, Task } from "../types/board";
 import NewTaskForm from "./NewTaskForm";
-
-import Board from "./Board";
-import { initialColumns } from "../data/initialColumns";
+import BoardTrello from "./BoardTrello";
+import {
+  initialColumnsEisenhower,
+  initialColumnsTrello
+} from "../data/initialColumns";
 import { useState } from "react";
 import BoardEisenhower from "../components/BoardEisenhower";
-import { getColumnIdFromTask } from "../utils/getColumnId";
+import { getColumnIdFromTask, getPriorityUrgency } from "../utils/getColumnId";
+import { Columns3, LayoutGrid } from "lucide-react";
 
 export default function BoardManager() {
-  const [columns, setColumns, isLoaded] = useLocalStorage<Column[]>(
-    "board",
-    initialColumns
-  );
+  const [columnsTrello, setColumnsTrello, isLoadedTrello] = useLocalStorage<
+    Column[]
+  >("boardTrello", initialColumnsTrello);
+  const [columnsEisenhower, setColumnsEisenhower, isLoadedEisenhower] =
+    useLocalStorage<Column[]>("boardEisenhower", initialColumnsEisenhower);
   const [isEisenhower, setIsEisenhower] = useState(false);
+  const [tasks, setTasks, isLoadedTasks] = useLocalStorage<Task[]>("tasks", []);
+  const columns = isEisenhower ? columnsEisenhower : columnsTrello;
+  const setColumns = isEisenhower ? setColumnsEisenhower : setColumnsTrello;
 
-  const handleAddTask = (_columnId: string, task: Task) => {
-    const columnId = getColumnIdFromTask(task.priority, task.urgency);
-    setColumns((prev) =>
-      prev.map((col) =>
-        col.id === columnId ? { ...col, tasks: [...col.tasks, task] } : col
-      )
-    );
+  const handleAddTask = (item: Task) => {
+    setTasks((prev) => [...prev, item]);
   };
 
-  const handleRemoveTask = (columnId: string, taskId: string) => {
-    setColumns((prev) =>
-      prev.map((col) =>
-        col.id === columnId
-          ? { ...col, tasks: col.tasks.filter((t) => t.id !== taskId) }
-          : col
-      )
-    );
+  const handleRemoveTask = (taskId: string) => {
+    setTasks((prev) => prev.filter((item) => item.id !== taskId));
   };
 
-  const handleUpdateTask = (columnId: string, updatedTask: Task) => {
-    const newColumnId = getColumnIdFromTask(
-      updatedTask.priority,
-      updatedTask.urgency
+  const handleUpdateTask = (updatedTask: Task) => {
+    setTasks((prev) =>
+      prev.map((item) => (item.id === updatedTask.id ? updatedTask : item))
     );
-
-    if (columnId === newColumnId) {
-      setColumns((prev) =>
-        prev.map((col) =>
-          col.id === columnId
-            ? {
-                ...col,
-                tasks: col.tasks.map((task) =>
-                  task.id === updatedTask.id ? updatedTask : task
-                )
-              }
-            : col
-        )
-      );
-    } else {
-      setColumns((prev) =>
-        prev.map((col) => {
-          if (col.id === columnId) {
-            return {
-              ...col,
-              tasks: col.tasks.filter((task) => task.id !== updatedTask.id)
-            };
-          }
-          if (col.id === newColumnId) {
-            return { ...col, tasks: [...col.tasks, updatedTask] };
-          }
-          return col;
-        })
-      );
-    }
   };
 
   const handleMoveTask = (
@@ -79,33 +44,30 @@ export default function BoardManager() {
   ) => {
     if (fromColumnId === toColumnId) return;
 
-    setColumns((prev) => {
-      const sourceColumn = prev.find((col) => col.id === fromColumnId);
-      const taskToMove = sourceColumn?.tasks.find((t) => t.id === taskId);
+    setTasks((prev) => {
+      const taskToMove = prev.find((task) => task.id === taskId);
       if (!taskToMove) return prev;
 
-      return prev.map((col) => {
-        if (col.id === fromColumnId) {
-          return { ...col, tasks: col.tasks.filter((t) => t.id !== taskId) };
-        }
-        if (col.id === toColumnId) {
-          return { ...col, tasks: [...col.tasks, taskToMove] };
-        }
-        return col;
-      });
+      let updatedTask: Task;
+
+      if (isEisenhower) {
+        const { priority, urgency } = getPriorityUrgency(toColumnId);
+        updatedTask = { ...taskToMove, priority, urgency };
+      } else {
+        updatedTask = { ...taskToMove, state: toColumnId as Task["state"] };
+      }
+
+      return prev.map((item) => (item.id === taskId ? updatedTask : item));
     });
   };
 
   const handleMoveColumnLeft = (columnId: string) => {
     setColumns((prev) => {
       const index = prev.findIndex((col) => col.id === columnId);
-
       if (index <= 0) return prev;
-
       const newColumns = [...prev];
       const [movedColumn] = newColumns.splice(index, 1);
       newColumns.splice(index - 1, 0, movedColumn);
-
       return newColumns;
     });
   };
@@ -113,52 +75,52 @@ export default function BoardManager() {
   const handleMoveColumnRight = (columnId: string) => {
     setColumns((prev) => {
       const index = prev.findIndex((col) => col.id === columnId);
-
       if (index === -1 || index >= prev.length - 1) return prev;
-
       const newColumns = [...prev];
       const [movedColumn] = newColumns.splice(index, 1);
       newColumns.splice(index + 1, 0, movedColumn);
-
       return newColumns;
     });
   };
 
-  if (!isLoaded) {
+  if (!isLoadedTrello || !isLoadedEisenhower || !isLoadedTasks) {
     return <div className="p-10 text-center text-gray-800">Caricamento...</div>;
   }
 
   return (
-    <div className="flex flex-col items-center gap-12 p-1 mt-8">
-      <div className="flex flex-col flex-wrap gap-12 justify-center max-w-7xl">
-        <NewTaskForm onAddTask={handleAddTask} />
+    <div className="flex flex-col items-center gap-20 p-1 mt-8 w-full max-w-7xl">
+      <div className="flex justify-center mb-1 gap-8 items-start">
+        <h1 className="font-bold text-4xl text-white">TASK MANAGER</h1>
         <button
           onClick={() => setIsEisenhower(!isEisenhower)}
-          className="bg-white hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 min-w-72 cursor-pointer border border-gray-300 rounded-md shadow mb-6"
+          className="bg-white hover:bg-gray-300 text-gray-800 font-semibold p-1 cursor-pointer border border-gray-300 rounded-md shadow"
         >
-          Cambia interfaccia
+          {isEisenhower ? <LayoutGrid /> : <Columns3 />}
         </button>
+      </div>
+      <div className="flex flex-col flex-wrap gap-12 justify-center min-w-2/3">
+        <NewTaskForm onAddTask={handleAddTask} />
       </div>
       {isEisenhower ? (
         <BoardEisenhower
-          columns={columns}
+          tasks={tasks}
+          columns={columnsEisenhower}
           onRemoveTask={handleRemoveTask}
           onUpdateTask={handleUpdateTask}
           onMoveTask={handleMoveTask}
           onMoveColumnLeft={handleMoveColumnLeft}
           onMoveColumnRight={handleMoveColumnRight}
-          onAddTask={handleAddTask}
           isEisenhower={isEisenhower}
         />
       ) : (
-        <Board
-          columns={columns}
+        <BoardTrello
+          tasks={tasks}
+          columns={columnsTrello}
           onRemoveTask={handleRemoveTask}
           onUpdateTask={handleUpdateTask}
           onMoveTask={handleMoveTask}
           onMoveColumnLeft={handleMoveColumnLeft}
           onMoveColumnRight={handleMoveColumnRight}
-          onAddTask={handleAddTask}
         />
       )}
     </div>

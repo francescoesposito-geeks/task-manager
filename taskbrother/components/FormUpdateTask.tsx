@@ -1,15 +1,7 @@
 "use client";
 import { useState } from "react";
-import { taskSchema } from "../lib/schemas/task";
+import { taskSchema, TaskFormData } from "../lib/schemas/task";
 import { Task } from "../types/board";
-
-export interface TaskFormData {
-  title: string;
-  description?: string;
-  priority: "importante" | "non-importante";
-  urgency: "urgente" | "non-urgente";
-  state: "to-do" | "doing" | "testing" | "done";
-}
 
 interface FormUpdateTaskProps {
   initialValues?: {
@@ -17,7 +9,7 @@ interface FormUpdateTaskProps {
     description?: string;
     priority: "importante" | "non-importante" | "";
     urgency: "urgente" | "non-urgente" | "";
-    state: "to-do" | "doing" | "testing" | "done";
+    state: "to-do" | "doing" | "testing" | "done" | "blocked";
   };
   onSubmit: (data: TaskFormData) => boolean;
   children?: React.ReactNode;
@@ -41,7 +33,7 @@ export default function FormUpdateTask({
     initialValues?.urgency || ""
   );
   const [state, setState] = useState<
-    "to-do" | "doing" | "testing" | "done" | ""
+    "to-do" | "doing" | "testing" | "done" | "blocked" | ""
   >(initialValues?.state || "");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -163,10 +155,11 @@ export default function FormUpdateTask({
             <option value="" disabled hidden>
               Seleziona...
             </option>
-            <option value="urgente">To do</option>
+            <option value="to-do">To do</option>
             <option value="doing">Doing</option>
             <option value="testing">Testing</option>
             <option value="done">Done</option>
+            <option value="blocked">Blocked</option>
           </select>
           {errors.state && (
             <span className="text-red-600 text-sm">{errors.state}</span>

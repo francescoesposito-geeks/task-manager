@@ -1,11 +1,11 @@
 "use client";
 import { Column, Task } from "../types/board";
-import ColumnView from "./ColumnView";
+import ColumnViewTrello from "./ColumnViewTrello";
 
-export interface BoardProps {
+export interface BoardTrelloProps {
   columns: Column[];
-  onRemoveTask: (columnId: string, taskId: string) => void;
-  onUpdateTask: (columnId: string, task: Task) => void;
+  onRemoveTask: (taskId: string) => void;
+  onUpdateTask: (task: Task) => void;
   onMoveTask: (
     fromColumnId: string,
     toColumnId: string,
@@ -13,31 +13,30 @@ export interface BoardProps {
   ) => void;
   onMoveColumnLeft: (columnId: string) => void;
   onMoveColumnRight: (columnId: string) => void;
-  onAddTask: (columnId: string, task: Task) => void;
+  tasks: Task[];
 }
 
-export default function Board({
+export default function BoardTrello({
   columns,
   onRemoveTask,
   onUpdateTask,
   onMoveTask,
   onMoveColumnLeft,
   onMoveColumnRight,
-  onAddTask
-}: BoardProps) {
+  tasks
+}: BoardTrelloProps) {
   return (
     <div className="flex overflow-x-auto gap-6 items-start w-full">
       {columns.map((column) => (
-        <ColumnView
+        <ColumnViewTrello
+          tasksList={tasks.filter((item) => item.state === column.id)}
           key={column.id}
           column={column}
-          allColumns={columns}
           onRemoveTask={onRemoveTask}
           onUpdateTask={onUpdateTask}
           onMoveTask={onMoveTask}
           onMoveColumnLeft={onMoveColumnLeft}
           onMoveColumnRight={onMoveColumnRight}
-          onAddTask={onAddTask}
         />
       ))}
     </div>

@@ -1,11 +1,11 @@
 "use client";
 import { Column, Task } from "../types/board";
-import ColumnView from "./ColumnView";
+import ColumnViewEisenhower from "./ColumnViewEisenhower";
 
 export interface BoardEisenhowerProps {
   columns: Column[];
-  onRemoveTask: (columnId: string, taskId: string) => void;
-  onUpdateTask: (columnId: string, task: Task) => void;
+  onRemoveTask: (taskId: string) => void;
+  onUpdateTask: (task: Task) => void;
   onMoveTask: (
     fromColumnId: string,
     toColumnId: string,
@@ -13,8 +13,8 @@ export interface BoardEisenhowerProps {
   ) => void;
   onMoveColumnLeft: (columnId: string) => void;
   onMoveColumnRight: (columnId: string) => void;
-  onAddTask: (columnId: string, task: Task) => void;
   isEisenhower: boolean;
+  tasks: Task[];
 }
 
 export default function BoardEisenhower({
@@ -24,22 +24,21 @@ export default function BoardEisenhower({
   onMoveTask,
   onMoveColumnLeft,
   onMoveColumnRight,
-  onAddTask,
-  isEisenhower
+  isEisenhower,
+  tasks
 }: BoardEisenhowerProps) {
   return (
     <div className="grid grid-cols-2 gap-4 w-full">
       {columns.map((column) => (
-        <ColumnView
+        <ColumnViewEisenhower
+          tasksList={tasks.filter((item) => item.state === column.id)}
           key={column.id}
           column={column}
-          allColumns={columns}
           onRemoveTask={onRemoveTask}
           onUpdateTask={onUpdateTask}
           onMoveTask={onMoveTask}
           onMoveColumnLeft={onMoveColumnLeft}
           onMoveColumnRight={onMoveColumnRight}
-          onAddTask={onAddTask}
           isEisenhower={isEisenhower}
         />
       ))}

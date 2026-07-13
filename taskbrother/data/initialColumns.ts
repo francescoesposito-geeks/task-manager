@@ -1,21 +1,36 @@
 import { Column } from "../types/board";
 
-export const initialColumns: Column[] = [
-  { id: "urgente-importante", title: "Urgente & Importante", tasks: [] },
+export const initialColumnsEisenhower: Column[] = [
+  { id: "urgente-importante", title: "Urgente & Importante" },
   {
     id: "urgente-non-importante",
-    title: "Urgente & Non importante",
-    tasks: []
+    title: "Urgente & Non importante"
   },
   {
     id: "importante-non-urgente",
-    title: "Importante & Non urgente",
-    tasks: []
+    title: "Importante & Non urgente"
   },
 
   {
     id: "non-urgente-non-importante",
-    title: "Non urgente & Non importante",
-    tasks: []
+    title: "Non urgente & Non importante"
+  }
+];
+
+export const initialColumnsTrello: Column[] = [
+  { id: "to-do", title: "To do" },
+  { id: "blocked", title: "Blocked" },
+  {
+    id: "doing",
+    title: "doing"
+  },
+  {
+    id: "testing",
+    title: "testing"
+  },
+
+  {
+    id: "done",
+    title: "done"
   }
 ];

@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
 import { Task } from "../types/board";
-import FormUpdateTask, { TaskFormData } from "./FormUpdateTask";
+import FormUpdateTask from "./FormUpdateTask";
+import { TaskFormData } from "../lib/schemas/task";
 
 export interface TaskItemProps {
   task: Task;
@@ -38,13 +39,14 @@ export default function TaskItem({
 
   if (isEditing) {
     return (
-      <li className="flex flex-col p-4  text-center gap-3 border border-gray-300 rounded-lg shadow bg-white list-none">
+      <li className="flex flex-col p-4 text-center gap-3 border border-gray-300 rounded-lg shadow bg-white list-none">
         <FormUpdateTask
+          key={task.id}
           initialValues={task}
           onSubmit={handleSave}
           className="flex flex-col gap-4"
         >
-          <div className="flex gap-2  justify-center">
+          <div className="flex gap-2 justify-center">
             <button
               type="submit"
               className="bg-[#49ba73] hover:bg-green-600 text-white py-1 px-3 rounded cursor-pointer text-sm"
@@ -96,7 +98,7 @@ export default function TaskItem({
           {task.description}
         </p>
       )}
-      <h4 className="text-sm text-gray-600">{task.state}</h4>
+      <h4 className="text-sm text-gray-600 uppercase">{task.state}</h4>
 
       <button
         onClick={() => setIsEditing(true)}
