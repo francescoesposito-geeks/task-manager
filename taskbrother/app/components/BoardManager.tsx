@@ -1,15 +1,15 @@
 "use client";
-import { useLocalStorage } from "../hooks/useLocalStorage";
-import { Column, Task } from "../types/board";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { Column, Task } from "../../types/board";
 import NewTaskForm from "./NewTaskForm";
 import BoardTrello from "./BoardTrello";
 import {
   initialColumnsEisenhower,
   initialColumnsTrello
-} from "../data/initialColumns";
+} from "../../data/initialColumns";
 import { useState } from "react";
 import BoardEisenhower from "../components/BoardEisenhower";
-import { getPriorityUrgency } from "../utils/getColumnId";
+import { getPriorityUrgency } from "../../utils/getColumnId";
 import { Columns3, LayoutGrid } from "lucide-react";
 
 export default function BoardManager() {

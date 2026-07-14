@@ -1,38 +1,29 @@
 "use client";
 import { useState } from "react";
-import { Task } from "../types/board";
-import { taskSchema } from "../lib/schemas/task";
-import { getColumnIdFromTask } from "../utils/getColumnId";
+import { Task } from "../../types/board";
+import { taskSchema } from "../../lib/schemas/task";
+import {
+  OPTIONS_STATE,
+  OPTIONS_URGENCY,
+  OPTIONS_PRIORITY
+} from "../../data/selectFormStates";
+import { initialValuesForm } from "../../data/initialValuesForm";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 export interface NewTaskFormProps {
   onAddTask: (task: Task) => void;
 }
 
 export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [priority, setPriority] = useState<
-    "importante" | "non-importante" | ""
-  >("");
-  const [urgency, setUrgency] = useState<"urgente" | "non-urgente" | "">("");
-  const [state, setState] = useState<
-    "to-do" | "doing" | "testing" | "done" | "" | "blocked"
-  >("");
-  const [deadline, setDeadline] = useState("");
+  const [formValues, setformValues] = useState(initialValuesForm);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault();
     setErrors({});
 
-    const result = taskSchema.safeParse({
-      title,
-      description,
-      priority,
-      urgency,
-      state,
-      deadline
-    });
+    const result = taskSchema.safeParse(formValues);
 
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
@@ -42,11 +33,6 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
       setErrors(fieldErrors);
       return;
     }
-
-    // const columnId = getColumnIdFromTask(
-    //   result.data.priority,
-    //   result.data.urgency
-    // );
 
     let newTask = {
       id: crypto.randomUUID(),
@@ -59,14 +45,16 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
     };
 
     onAddTask(newTask);
-
-    setTitle("");
-    setDescription("");
-    setPriority("");
-    setUrgency("");
-    setState("");
-    setDeadline("");
+    setformValues(initialValuesForm);
     setErrors({});
+  };
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setformValues((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -81,9 +69,10 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
           <label className="text-sm font-semibold text-gray-700">
             Titolo del Task*
           </label>
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+          <Input
+            name="title"
+            value={formValues.title}
+            onChange={handleChange}
             placeholder="Titolo"
             className="border border-gray-300 rounded-md p-2 bg-white"
           />
@@ -97,17 +86,19 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
             Importanza*
           </label>
           <select
-            value={priority}
-            onChange={(e) =>
-              setPriority(e.target.value as "importante" | "non-importante")
-            }
+            name="priority"
+            value={formValues.priority}
+            onChange={handleChange}
             className="border border-gray-300 rounded-md p-2 bg-white cursor-pointer"
           >
             <option value="" disabled hidden>
               Seleziona...
             </option>
-            <option value="importante">Importante</option>
-            <option value="non-importante">Non importante</option>
+            {OPTIONS_PRIORITY.map((item) => (
+              <option key={item.value} value={item.value}>
+                {item.label}
+              </option>
+            ))}
           </select>
           {errors.priority && (
             <span className="text-red-600 text-sm">{errors.priority}</span>
@@ -119,8 +110,9 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
             Descrizione
           </label>
           <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            name="description"
+            value={formValues.description}
+            onChange={handleChange}
             placeholder="Descrizione"
             className="border border-gray-300 rounded-md p-2 bg-white"
           />
@@ -134,17 +126,19 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
             Priorità*
           </label>
           <select
-            value={urgency}
-            onChange={(e) =>
-              setUrgency(e.target.value as "urgente" | "non-urgente")
-            }
+            name="urgency"
+            value={formValues.urgency}
+            onChange={handleChange}
             className="border border-gray-300 rounded-md p-2 bg-white cursor-pointer"
           >
             <option value="" disabled hidden>
               Seleziona...
             </option>
-            <option value="urgente">Urgente</option>
-            <option value="non-urgente">Non urgente</option>
+            {OPTIONS_URGENCY.map((item) => (
+              <option key={item.value} value={item.value}>
+                {item.label}
+              </option>
+            ))}
           </select>
           {errors.urgency && (
             <span className="text-red-600 text-sm">{errors.urgency}</span>
@@ -154,10 +148,11 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
           <label className="text-sm font-semibold text-gray-700">
             Scadenza
           </label>
-          <input
+          <Input
+            name="deadline"
             type="date"
-            value={deadline}
-            onChange={(e) => setDeadline(e.target.value)}
+            value={formValues.deadline}
+            onChange={handleChange}
             className="border border-gray-300 rounded-md p-2 bg-white cursor-pointer"
           />
           {errors.deadline && (
@@ -167,27 +162,19 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
         <div className="flex flex-col gap-1">
           <label className="text-sm font-semibold text-gray-700">Stato*</label>
           <select
-            value={state}
-            onChange={(e) =>
-              setState(
-                e.target.value as
-                  | "to-do"
-                  | "doing"
-                  | "testing"
-                  | "done"
-                  | "blocked"
-              )
-            }
+            name="state"
+            value={formValues.state}
+            onChange={handleChange}
             className="border border-gray-300 rounded-md p-2 bg-white cursor-pointer"
           >
             <option value="" disabled hidden>
               Seleziona...
             </option>
-            <option value="to-do">To do</option>
-            <option value="doing">Doing</option>
-            <option value="testing">Testing</option>
-            <option value="blocked">Blocked</option>
-            <option value="done">Done</option>
+            {OPTIONS_STATE.map((item) => (
+              <option key={item.value} value={item.value}>
+                {item.label}
+              </option>
+            ))}
           </select>
           {errors.state && (
             <span className="text-red-600 text-sm">{errors.state}</span>
@@ -195,12 +182,14 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
         </div>
       </div>
 
-      <button
+      <Button
         type="submit"
-        className="mt-5 w-full bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow cursor-pointer"
+        variant="standard"
+        size="compact"
+        className="mt-5 w-full"
       >
         Aggiungi task
-      </button>
+      </Button>
     </form>
   );
 }

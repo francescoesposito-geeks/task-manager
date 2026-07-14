@@ -1,5 +1,5 @@
 "use client";
-import { Column, Task } from "../types/board";
+import { Column, Task } from "../../types/board";
 import ColumnViewTrello from "./ColumnViewTrello";
 
 export interface BoardTrelloProps {

@@ -1,4 +1,4 @@
-import BoardManager from "../components/BoardManager";
+import BoardManager from "./components/BoardManager";
 
 export default function Home() {
   return (

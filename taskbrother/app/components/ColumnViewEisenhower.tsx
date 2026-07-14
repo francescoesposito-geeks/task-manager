@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
-import { Column, Task } from "../types/board";
+import { Column, Task } from "../../types/board";
 import TaskItem from "./TaskItem";
 
-export interface ColumnViewTrelloProps {
+export interface ColumnViewEisenhowerProps {
   column: Column;
   isEisenhower: boolean;
   onRemoveTask: (taskId: string) => void;
@@ -18,16 +18,16 @@ export interface ColumnViewTrelloProps {
   tasksList: Task[];
 }
 
-export default function ColumnViewTrello({
-  tasksList,
+export default function ColumnViewEisenhower({
   column,
   onRemoveTask,
   onUpdateTask,
   onMoveTask,
   onMoveColumnLeft,
   onMoveColumnRight,
+  tasksList,
   isEisenhower
-}: ColumnViewTrelloProps) {
+}: ColumnViewEisenhowerProps) {
   const [isDragOver, setIsDragOver] = useState(false);
 
   const handleDragOver = (e: React.DragEvent) => e.preventDefault();
@@ -52,7 +52,7 @@ export default function ColumnViewTrello({
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`flex flex-col min-w-72 md:max-w-80 min-h-96 shrink-0 rounded-lg p-4 bg-gray-100 transition-all duration-200 shadow-xl ${
+      className={`flex flex-col shrink-0 rounded-lg p-4 bg-gray-200 transition-all duration-200 shadow-xl ${
         isDragOver
           ? "bg-gray-200 border border-blue-400"
           : "bg-gray-50 border border-transparent"
@@ -80,7 +80,7 @@ export default function ColumnViewTrello({
         </div>
       </div>
 
-      <ul className="flex flex-col gap-4 overflow-y-auto flex-1 mb-4">
+      <ul className="overflow-y-auto flex-1 mb-4 min-h-72 grid grid-cols-1 lg:grid-cols-2 gap-4 w-full bg-gray-200 rounded-lg">
         {tasksList.map((task) => (
           <TaskItem
             key={task.id}

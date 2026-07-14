@@ -1,7 +1,12 @@
 "use client";
 import { useState } from "react";
-import { taskSchema, TaskFormData } from "../lib/schemas/task";
-import { Task } from "../types/board";
+import { taskSchema, TaskFormData } from "../../lib/schemas/task";
+import { Task } from "../../types/board";
+import {
+  OPTIONS_PRIORITY,
+  OPTIONS_STATE,
+  OPTIONS_URGENCY
+} from "../../data/selectFormStates";
 
 interface FormUpdateTaskProps {
   initialValues?: {
@@ -120,8 +125,11 @@ export default function FormUpdateTask({
             <option value="" disabled hidden>
               Seleziona...
             </option>
-            <option value="importante">Importante</option>
-            <option value="non-importante">Non importante</option>
+            {OPTIONS_PRIORITY.map((item) => (
+              <option key={item.value} value={item.value}>
+                {item.label}
+              </option>
+            ))}
           </select>
           {errors.priority && (
             <span className="text-red-600 text-sm">{errors.priority}</span>
@@ -140,8 +148,11 @@ export default function FormUpdateTask({
             <option value="" disabled hidden>
               Seleziona...
             </option>
-            <option value="urgente">Urgente</option>
-            <option value="non-urgente">Non urgente</option>
+            {OPTIONS_URGENCY.map((item) => (
+              <option key={item.value} value={item.value}>
+                {item.label}
+              </option>
+            ))}
           </select>
           {errors.urgency && (
             <span className="text-red-600 text-sm">{errors.urgency}</span>
@@ -159,11 +170,11 @@ export default function FormUpdateTask({
             <option value="" disabled hidden>
               Seleziona...
             </option>
-            <option value="to-do">To do</option>
-            <option value="doing">Doing</option>
-            <option value="testing">Testing</option>
-            <option value="done">Done</option>
-            <option value="blocked">Blocked</option>
+            {OPTIONS_STATE.map((item) => (
+              <option key={item.value} value={item.value}>
+                {item.label}
+              </option>
+            ))}
           </select>
           {errors.state && (
             <span className="text-red-600 text-sm">{errors.state}</span>

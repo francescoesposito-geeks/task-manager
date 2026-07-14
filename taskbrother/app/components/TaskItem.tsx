@@ -1,9 +1,11 @@
 "use client";
 import { useState } from "react";
-import { Task } from "../types/board";
+import { Task } from "../../types/board";
 import FormUpdateTask from "./FormUpdateTask";
-import { TaskFormData } from "../lib/schemas/task";
-import { isDeadlineUrgent, getDaysUntilDeadline } from "../utils/deadLine";
+import { TaskFormData } from "../../lib/schemas/task";
+import { isDeadlineUrgent } from "../../utils/deadLine";
+import { Button } from "../components/ui/button";
+import { X } from "lucide-react";
 
 export interface TaskItemProps {
   task: Task;
@@ -22,7 +24,6 @@ export default function TaskItem({
 }: TaskItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const urgent = task.deadline ? isDeadlineUrgent(task.deadline) : false;
-  const daysLeft = task.deadline ? getDaysUntilDeadline(task.deadline) : null;
 
   const handleSave = (data: TaskFormData) => {
     onUpdate({
@@ -52,19 +53,13 @@ export default function TaskItem({
           onSubmit={handleSave}
           className="flex flex-col gap-4"
         >
-          <div className="flex gap-2 justify-center">
-            <button
-              type="submit"
-              className="bg-[#49ba73] hover:bg-green-600 text-white py-1 px-3 rounded cursor-pointer text-sm"
-            >
-              Salva
-            </button>
-            <button
-              onClick={handleCancel}
-              className="bg-red-600 hover:bg-red-800 text-white py-1 px-3 rounded cursor-pointer text-sm"
-            >
+          <div className="flex gap-2 justify-center mt-4">
+            <Button type="submit" variant="green" size="compact">
+              Conferma
+            </Button>
+            <Button variant="red" size="compact" onClick={handleCancel}>
               Annulla
-            </button>
+            </Button>
           </div>
         </FormUpdateTask>
       </li>
@@ -89,12 +84,14 @@ export default function TaskItem({
       }}
     >
       <div className="flex justify-end">
-        <button
+        <Button
+          variant="close"
+          size="icon-close"
           onClick={() => onRemove(task.id)}
-          className="flex items-center justify-center cursor-pointer w-6 h-6 bg-gray-500 hover:bg-gray-700 text-white rounded-full text-sm"
+          aria-label="Elimina task"
         >
-          x
-        </button>
+          <X className="size-3" />
+        </Button>
       </div>
 
       <h3 className="font-bold border-b border-gray-200 pb-2 wrap-break-word">
@@ -102,35 +99,35 @@ export default function TaskItem({
       </h3>
 
       {task.description && (
-        <p className="text-sm text-gray-600 pb-4 wrap-break-word border-b border-gray-200">
+        <p className="text-sm text-gray-900 pb-4 wrap-break-word border-b border-gray-200">
           {task.description}
         </p>
       )}
 
       {isEisenhower ? (
-        <h4 className="text-sm text-gray-600 uppercase border border-gray-300 rounded px-2 py-1 bg-gray-100">
+        <h4 className="text-sm text-gray-800 uppercase rounded px-2 py-1 border-b border-gray-200 pb-2">
           {task.state}
         </h4>
       ) : (
-        <div className="flex justify-center p-4 border-b border-gray-200">
-          <span className="text-sm text-gray-600 uppercase border border-gray-300 rounded px-2 py-1 bg-gray-100">
+        <div className="flex justify-center border-b border-gray-200 pb-4">
+          <span className="text-sm text-gray-800 uppercase">
             {task.priority} & {task.urgency}
           </span>
         </div>
       )}
       {task.deadline && (
-        <p className="text-sm text-gray-600 pb-4 wrap-break-word">
-          <span className="uppercase font-bold">deadline: </span>
+        <p className="text-sm text-gray-600 pb-2 wrap-break-word">
+          <span className="font-bold">Deadline: </span>
           {new Date(task.deadline).toLocaleDateString("it-IT")}
         </p>
       )}
-
-      <button
+      <Button
+        variant="standard"
+        size="compact"
         onClick={() => setIsEditing(true)}
-        className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-1 px-3 border border-gray-400 rounded shadow cursor-pointer text-sm"
       >
         modifica
-      </button>
+      </Button>
     </li>
   );
 }

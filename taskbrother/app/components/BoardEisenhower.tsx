@@ -1,6 +1,6 @@
 "use client";
-import { Column, Task } from "../types/board";
-import { getColumnIdFromTask } from "../utils/getColumnId";
+import { Column, Task } from "../../types/board";
+import { getColumnIdFromTask } from "../../utils/getColumnId";
 import ColumnViewEisenhower from "./ColumnViewEisenhower";
 
 export interface BoardEisenhowerProps {
