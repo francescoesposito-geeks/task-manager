@@ -21,9 +21,8 @@ const buttonVariants = cva(
         standard:
           "bg-white hover:bg-gray-200 text-black font-semibold border border-gray-400 rounded-lg shadow cursor-pointer text-sm",
         close: "bg-gray-500 hover:bg-gray-700 text-white cursor-pointer",
-        green:
-          "bg-[#49ba73] text-white font-semibold border border-green-900 hover:bg-green-700 rounded-lg shadow cursor-pointer",
-        red: "bg-red-600 text-white font-semibold border border-red-900 hover:bg-red-700 rounded-lg shadow cursor-pointer"
+        success:
+          "bg-[#49ba73] text-white font-semibold border border-green-900 hover:bg-green-700 rounded-lg shadow cursor-pointer"
       },
       size: {
         default:

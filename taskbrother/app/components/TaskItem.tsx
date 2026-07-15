@@ -1,11 +1,11 @@
 "use client";
 import { useState } from "react";
 import { Task } from "../../types/board";
-import FormUpdateTask from "./FormUpdateTask";
 import { TaskFormData } from "../../lib/schemas/task";
 import { isDeadlineUrgent } from "../../utils/deadLine";
 import { Button } from "../components/ui/button";
 import { X } from "lucide-react";
+import TaskForm from "./TaskForm";
 
 export interface TaskItemProps {
   task: Task;
@@ -46,29 +46,36 @@ export default function TaskItem({
 
   if (isEditing) {
     return (
-      <li className="flex flex-col p-4 text-center gap-3 border border-gray-300 rounded-lg shadow bg-white list-none">
-        <FormUpdateTask
+      <li className="flex flex-col p-4 text-center gap-3 border border-border rounded-lg shadow bg-card list-none">
+        <TaskForm
           key={task.id}
-          initialValues={task}
+          variant="compact"
+          initialValues={{
+            title: task.title,
+            description: task.description ?? "",
+            priority: task.priority,
+            urgency: task.urgency,
+            state: task.state,
+            deadline: task.deadline ?? ""
+          }}
           onSubmit={handleSave}
-          className="flex flex-col gap-4"
         >
           <div className="flex gap-2 justify-center mt-4">
-            <Button type="submit" variant="green" size="compact">
+            <Button type="submit" variant="success" size="compact">
               Conferma
             </Button>
-            <Button variant="red" size="compact" onClick={handleCancel}>
+            <Button variant="destructive" size="compact" onClick={handleCancel}>
               Annulla
             </Button>
           </div>
-        </FormUpdateTask>
+        </TaskForm>
       </li>
     );
   }
 
   return (
     <li
-      className={`flex flex-col p-4 text-center gap-3 rounded-lg shadow list-none border ${
+      className={`flex flex-col p-4 max-h-fit text-center gap-3 rounded-lg shadow list-none border ${
         urgent ? "border-red-300 bg-red-50" : "border-gray-300 bg-white"
       }`}
       draggable="true"
