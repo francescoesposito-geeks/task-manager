@@ -10,13 +10,22 @@ import {
 import { initialValuesForm } from "../../data/initialValuesForm";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import {
+  SelectContent,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectGroup,
+  SelectItem
+} from "./ui/select";
+import { Textarea } from "./ui/textarea";
 
 export interface NewTaskFormProps {
   onAddTask: (task: Task) => void;
 }
 
 export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
-  const [formValues, setformValues] = useState(initialValuesForm);
+  const [formValues, setFormValues] = useState(initialValuesForm);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
@@ -34,27 +43,27 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
       return;
     }
 
-    let newTask = {
+    const newTask = {
       id: crypto.randomUUID(),
-      title: result.data.title,
-      description: result.data.description || undefined,
-      priority: result.data.priority,
-      urgency: result.data.urgency,
-      state: result.data.state,
-      deadline: result.data.deadline || undefined
+      ...result.data,
+      description:
+        result.data.description !== "" ? result.data.description : undefined,
+
+      deadline: result.data.deadline !== "" ? result.data.deadline : undefined
     };
 
     onAddTask(newTask);
-    setformValues(initialValuesForm);
-    setErrors({});
+    setFormValues(initialValuesForm);
   };
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setformValues((prev) => ({ ...prev, [name]: value }));
+    setFormValues((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectChange = (name: string) => (value: string | null) => {
+    setFormValues((prev) => ({ ...prev, [name]: value ?? "" }));
   };
 
   return (
@@ -66,51 +75,76 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
       <h3 className="font-bold mb-4 text-lg">Nuova Task</h3>
       <div className="grid grid-cols-2 gap-x-6 gap-y-4">
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-semibold text-gray-700">
-            Titolo del Task*
+          <label
+            htmlFor="title"
+            className="text-sm font-semibold text-gray-700"
+          >
+            Titolo del Task
+            <span aria-hidden="true"> *</span>
           </label>
           <Input
             name="title"
             value={formValues.title}
             onChange={handleChange}
             placeholder="Titolo"
+            aria-describedby={errors.title ? "title-error" : undefined}
             className="border border-gray-300 rounded-md p-2 bg-white"
           />
           {errors.title && (
-            <span className="text-red-600 text-sm">{errors.title}</span>
+            <span id="title-error" className="text-red-600 text-sm">
+              {errors.title}
+            </span>
           )}
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-semibold text-gray-700">
-            Importanza*
-          </label>
-          <select
-            name="priority"
-            value={formValues.priority}
-            onChange={handleChange}
-            className="border border-gray-300 rounded-md p-2 bg-white cursor-pointer"
+          <label
+            htmlFor="priority"
+            className="text-sm font-semibold text-gray-700"
           >
-            <option value="" disabled hidden>
-              Seleziona...
-            </option>
-            {OPTIONS_PRIORITY.map((item) => (
-              <option key={item.value} value={item.value}>
-                {item.label}
-              </option>
-            ))}
-          </select>
+            Importanza
+            <span aria-hidden="true"> *</span>
+          </label>
+
+          <Select
+            items={OPTIONS_PRIORITY}
+            value={formValues.priority}
+            onValueChange={handleSelectChange("priority")}
+          >
+            <SelectTrigger
+              id="priority"
+              aria-describedby={errors.priority ? "priority-error" : undefined}
+              className="w-full bg-white border border-gray-300"
+            >
+              <SelectValue placeholder="Seleziona.." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {OPTIONS_PRIORITY.map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
           {errors.priority && (
-            <span className="text-red-600 text-sm">{errors.priority}</span>
+            <span id="priority-error" className="text-red-600 text-sm">
+              {errors.priority}
+            </span>
           )}
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-semibold text-gray-700">
+          <label
+            htmlFor="description"
+            className="text-sm font-semibold text-gray-700"
+          >
             Descrizione
           </label>
-          <textarea
+          <Textarea
             name="description"
+            id="description"
             value={formValues.description}
             onChange={handleChange}
             placeholder="Descrizione"
@@ -122,62 +156,98 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-semibold text-gray-700">
-            Priorità*
-          </label>
-          <select
-            name="urgency"
-            value={formValues.urgency}
-            onChange={handleChange}
-            className="border border-gray-300 rounded-md p-2 bg-white cursor-pointer"
+          <label
+            htmlFor="urgency"
+            className="text-sm font-semibold text-gray-700"
           >
-            <option value="" disabled hidden>
-              Seleziona...
-            </option>
-            {OPTIONS_URGENCY.map((item) => (
-              <option key={item.value} value={item.value}>
-                {item.label}
-              </option>
-            ))}
-          </select>
+            Priorità
+            <span aria-hidden="true"> *</span>
+          </label>
+          <Select
+            items={OPTIONS_URGENCY}
+            value={formValues.urgency}
+            onValueChange={handleSelectChange("urgency")}
+          >
+            <SelectTrigger
+              id="urgency"
+              className="w-full bg-white border border-gray-300"
+              aria-describedby={errors.urgency ? "urgency-error" : undefined}
+            >
+              <SelectValue placeholder="Seleziona.." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {OPTIONS_URGENCY.map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
           {errors.urgency && (
-            <span className="text-red-600 text-sm">{errors.urgency}</span>
+            <span id="urgency-error" className="text-red-600 text-sm">
+              {errors.urgency}
+            </span>
           )}
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-semibold text-gray-700">
+          <label
+            htmlFor="deadline"
+            className="text-sm font-semibold text-gray-700"
+          >
             Scadenza
           </label>
           <Input
             name="deadline"
             type="date"
+            id="deadline"
             value={formValues.deadline}
             onChange={handleChange}
+            aria-describedby={errors.deadline ? "deadline-error" : undefined}
             className="border border-gray-300 rounded-md p-2 bg-white cursor-pointer"
           />
           {errors.deadline && (
-            <span className="text-red-600 text-sm">{errors.deadline}</span>
+            <span id="deadline-error" className="text-red-600 text-sm">
+              {errors.deadline}
+            </span>
           )}
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-semibold text-gray-700">Stato*</label>
-          <select
-            name="state"
-            value={formValues.state}
-            onChange={handleChange}
-            className="border border-gray-300 rounded-md p-2 bg-white cursor-pointer"
+          <label
+            htmlFor="state"
+            className="text-sm font-semibold text-gray-700"
           >
-            <option value="" disabled hidden>
-              Seleziona...
-            </option>
-            {OPTIONS_STATE.map((item) => (
-              <option key={item.value} value={item.value}>
-                {item.label}
-              </option>
-            ))}
-          </select>
+            Stato
+            <span aria-hidden="true"> *</span>
+          </label>
+
+          <Select
+            items={OPTIONS_STATE}
+            value={formValues.state}
+            onValueChange={handleSelectChange("state")}
+          >
+            <SelectTrigger
+              id="state"
+              className="w-full bg-white border border-gray-300"
+              aria-describedby={errors.state ? "state-error" : undefined}
+            >
+              <SelectValue placeholder="Seleziona.." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {OPTIONS_STATE.map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
           {errors.state && (
-            <span className="text-red-600 text-sm">{errors.state}</span>
+            <span id="state-error" className="text-red-600 text-sm">
+              {errors.state}
+            </span>
           )}
         </div>
       </div>
@@ -186,7 +256,7 @@ export default function NewTaskForm({ onAddTask }: NewTaskFormProps) {
         type="submit"
         variant="standard"
         size="compact"
-        className="mt-5 w-full"
+        className="mt-8 w-full"
       >
         Aggiungi task
       </Button>
