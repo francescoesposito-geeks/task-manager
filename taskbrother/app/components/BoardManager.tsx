@@ -9,9 +9,10 @@ import {
 import { useState } from "react";
 import BoardEisenhower from "../components/BoardEisenhower";
 import { getPriorityUrgency } from "../../utils/getColumnId";
-import { Columns3, LayoutGrid } from "lucide-react";
 import TaskForm from "./TaskForm";
-import { ThemeSwitcher } from "./theme-switcher";
+import { ThemeSwitcher } from "./ThemeSwitcher";
+import { ViewSwitcher } from "./ViewSwitcher";
+import BoardCalendar from "./BoardCalendar";
 
 export default function BoardManager() {
   const [columnsTrello, setColumnsTrello, isLoadedTrello] = useLocalStorage<
@@ -19,9 +20,10 @@ export default function BoardManager() {
   >("boardTrello", initialColumnsTrello);
   const [columnsEisenhower, setColumnsEisenhower, isLoadedEisenhower] =
     useLocalStorage<Column[]>("boardEisenhower", initialColumnsEisenhower);
-  const [isEisenhower, setIsEisenhower] = useState(false);
+  const [view, setView] = useState<"trello" | "eisenhower" | "calendar">(
+    "trello"
+  );
   const [tasks, setTasks, isLoadedTasks] = useLocalStorage<Task[]>("tasks", []);
-  const setColumns = isEisenhower ? setColumnsEisenhower : setColumnsTrello;
 
   const handleAddTask = (item: Task) => {
     setTasks((prev) => [...prev, item]);
@@ -50,7 +52,7 @@ export default function BoardManager() {
 
       let updatedTask: Task;
 
-      if (isEisenhower) {
+      if (view === "eisenhower") {
         const { priority, urgency } = getPriorityUrgency(toColumnId);
         updatedTask = { ...taskToMove, priority, urgency };
       } else {
@@ -62,6 +64,8 @@ export default function BoardManager() {
   };
 
   const handleMoveColumnLeft = (columnId: string) => {
+    const setColumns =
+      view === "eisenhower" ? setColumnsEisenhower : setColumnsTrello;
     setColumns((prev) => {
       const index = prev.findIndex((col) => col.id === columnId);
       if (index <= 0) return prev;
@@ -73,6 +77,8 @@ export default function BoardManager() {
   };
 
   const handleMoveColumnRight = (columnId: string) => {
+    const setColumns =
+      view === "eisenhower" ? setColumnsEisenhower : setColumnsTrello;
     setColumns((prev) => {
       const index = prev.findIndex((col) => col.id === columnId);
       if (index === -1 || index >= prev.length - 1) return prev;
@@ -91,12 +97,7 @@ export default function BoardManager() {
     <div className="flex flex-col items-center gap-20 p-1 mt-8 w-full max-w-7xl">
       <div className="flex justify-center mb-1 gap-8 items-start">
         <h1 className="font-bold text-4xl text-white">TASK MANAGER</h1>
-        <button
-          onClick={() => setIsEisenhower(!isEisenhower)}
-          className="bg-white hover:bg-gray-300 text-gray-800 font-semibold p-1 cursor-pointer border border-gray-300 rounded-md shadow"
-        >
-          {isEisenhower ? <LayoutGrid /> : <Columns3 />}
-        </button>
+        <ViewSwitcher view={view} onViewChange={setView} />
         <ThemeSwitcher />
       </div>
       <div className="flex flex-col flex-wrap gap-12 justify-center min-w-2/3">
@@ -114,7 +115,7 @@ export default function BoardManager() {
           />
         </div>
       </div>
-      {isEisenhower ? (
+      {view === "eisenhower" && (
         <BoardEisenhower
           tasks={tasks}
           columns={columnsEisenhower}
@@ -123,9 +124,10 @@ export default function BoardManager() {
           onMoveTask={handleMoveTask}
           onMoveColumnLeft={handleMoveColumnLeft}
           onMoveColumnRight={handleMoveColumnRight}
-          isEisenhower={isEisenhower}
+          isEisenhower={true}
         />
-      ) : (
+      )}
+      {view === "trello" && (
         <BoardTrello
           tasks={tasks}
           columns={columnsTrello}
@@ -134,7 +136,14 @@ export default function BoardManager() {
           onMoveTask={handleMoveTask}
           onMoveColumnLeft={handleMoveColumnLeft}
           onMoveColumnRight={handleMoveColumnRight}
-          isEisenhower={isEisenhower}
+          isEisenhower={false}
+        />
+      )}
+      {view === "calendar" && (
+        <BoardCalendar
+          tasks={tasks}
+          onUpdateTask={handleUpdateTask}
+          onRemoveTask={handleRemoveTask}
         />
       )}
     </div>

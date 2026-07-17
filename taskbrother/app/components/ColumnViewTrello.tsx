@@ -65,13 +65,13 @@ export default function ColumnViewTrello({
           </span>
           <button
             onClick={() => onMoveColumnLeft(column.id)}
-            className="text-primary/60 hover:text-primary text-sm font-bold cursor-pointer"
+            className="text-primary/60 hover:text-primary text-sm font-bold"
           >
             ◀
           </button>
           <button
             onClick={() => onMoveColumnRight(column.id)}
-            className="text-primary/60 hover:text-primary text-sm font-bold cursor-pointer"
+            className="text-primary/60 hover:text-primary text-sm font-bold"
           >
             ▶
           </button>

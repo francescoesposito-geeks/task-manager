@@ -16,7 +16,7 @@ export const taskSchema = z.object({
   state: z.enum(["to-do", "doing", "testing", "done", "blocked"], {
     message: "Seleziona lo stato"
   }),
-  deadline: z.string().optional().or(z.literal(""))
+  deadline: z.string().min(1, "La scadenza è obbligatoria")
 });
 
 export type TaskFormData = z.infer<typeof taskSchema>;

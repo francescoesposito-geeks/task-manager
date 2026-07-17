@@ -28,7 +28,7 @@ export default function BoardTrello({
   isEisenhower
 }: BoardTrelloProps) {
   return (
-    <div className="flex overflow-x-auto gap-6 items-start w-full">
+    <div className="flex overflow-x-auto gap-6 items-start w-full pb-16">
       {columns.map((column) => (
         <ColumnViewTrello
           tasksList={tasks.filter((item) => item.state === column.id)}

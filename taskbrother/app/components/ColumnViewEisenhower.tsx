@@ -57,9 +57,7 @@ export default function ColumnViewEisenhower({
       }`}
     >
       <div className="flex justify-between items-center mb-4 gap-2 border-b pb-2 border-primary/20">
-        <h2 className="text-primary font-bold cursor-pointer">
-          {column.title}
-        </h2>
+        <h2 className="text-primary font-bold">{column.title}</h2>
 
         <div className="flex items-center content-center gap-3">
           <span className="text-primary text-sm font-bold px-2 py-0.5">
@@ -67,13 +65,13 @@ export default function ColumnViewEisenhower({
           </span>
           <button
             onClick={() => onMoveColumnLeft(column.id)}
-            className="text-gray-400 hover:text-gray-800 text-sm font-bold cursor-pointer"
+            className="text-gray-400 hover:text-gray-800 text-sm font-bold"
           >
             ◀
           </button>
           <button
             onClick={() => onMoveColumnRight(column.id)}
-            className="text-gray-400 hover:text-gray-800 text-sm font-bold cursor-pointer"
+            className="text-gray-400 hover:text-gray-800 text-sm font-bold"
           >
             ▶
           </button>

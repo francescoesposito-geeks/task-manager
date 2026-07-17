@@ -128,3 +128,54 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.rbc-date-cell,
+.rbc-button-link,
+.rbc-header,
+.rbc-agenda-date-cell,
+.rbc-agenda-time-cell,
+.rbc-agenda-event-cell {
+  color: var(--foreground) !important;
+}
+
+.rbc-month-view,
+.rbc-day-bg,
+.rbc-month-row {
+  background-color: var(--card);
+}
+
+.rbc-off-range-bg {
+  background-color: var(--secondary) !important;
+}
+
+.rbc-month-view,
+.rbc-header,
+.rbc-day-bg + .rbc-day-bg,
+.rbc-month-row + .rbc-month-row {
+  border-color: var(--border) !important;
+}
+
+.rbc-toolbar button {
+  background-color: var(--card) !important;
+  border-color: var(--border) !important;
+  color: var(--foreground) !important;
+}
+
+.rbc-toolbar button:hover {
+  background-color: var(--secondary) !important;
+  color: var(--foreground) !important;
+}
+
+.rbc-toolbar button.rbc-active,
+.rbc-toolbar button.rbc-active:hover {
+  background-color: var(--secondary) !important;
+  color: var(--foreground) !important;
+}
+
+.rbc-today {
+  background-color: color-mix(
+    in oklch,
+    var(--primary) 15%,
+    transparent
+  ) !important;
+}

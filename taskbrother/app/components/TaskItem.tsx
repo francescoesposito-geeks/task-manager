@@ -4,7 +4,7 @@ import { Task } from "../../types/board";
 import { TaskFormData } from "../../lib/schemas/task";
 import { isDeadlineUrgent } from "../../utils/deadLine";
 import { Button } from "../components/ui/button";
-import { X } from "lucide-react";
+import { Pointer, X } from "lucide-react";
 import TaskForm from "./TaskForm";
 
 export interface TaskItemProps {
@@ -23,7 +23,7 @@ export default function TaskItem({
   isEisenhower
 }: TaskItemProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const urgent = task.deadline ? isDeadlineUrgent(task.deadline) : false;
+  const urgent = isDeadlineUrgent(task.deadline);
 
   const handleSave = (data: TaskFormData) => {
     onUpdate({
@@ -33,7 +33,7 @@ export default function TaskItem({
       priority: data.priority,
       urgency: data.urgency,
       state: data.state,
-      deadline: data.deadline || undefined
+      deadline: data.deadline
     });
     setIsEditing(false);
 
@@ -56,7 +56,7 @@ export default function TaskItem({
             priority: task.priority,
             urgency: task.urgency,
             state: task.state,
-            deadline: task.deadline ?? ""
+            deadline: task.deadline
           }}
           onSubmit={handleSave}
         >
@@ -122,12 +122,12 @@ export default function TaskItem({
           </span>
         </div>
       )}
-      {task.deadline && (
-        <p className="text-sm text-primary pb-2 wrap-break-word">
-          <span className="font-bold">Deadline: </span>
-          {new Date(task.deadline).toLocaleDateString("it-IT")}
-        </p>
-      )}
+
+      <p className="text-sm text-primary pb-2 wrap-break-word">
+        <span className="font-bold">Deadline: </span>
+        {new Date(task.deadline).toLocaleDateString("it-IT")}
+      </p>
+
       <Button
         variant="default"
         size="compact"

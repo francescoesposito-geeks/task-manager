@@ -107,6 +107,24 @@ export default function TaskForm({
 
         <div className="flex flex-col gap-1">
           <label
+            htmlFor="description"
+            className="text-sm font-semibold text-foreground"
+          >
+            Descrizione
+          </label>
+          <Textarea
+            id="description"
+            placeholder="Descrizione"
+            {...register("description")}
+          />
+          {errors.description && (
+            <span className="text-destructive text-sm">
+              {errors.description.message}
+            </span>
+          )}
+        </div>
+        <div className="flex flex-col gap-1">
+          <label
             htmlFor="priority"
             className="text-sm font-semibold text-foreground"
           >
@@ -149,25 +167,6 @@ export default function TaskForm({
             </span>
           )}
         </div>
-        <div className="flex flex-col gap-1">
-          <label
-            htmlFor="description"
-            className="text-sm font-semibold text-foreground"
-          >
-            Descrizione
-          </label>
-          <Textarea
-            id="description"
-            placeholder="Descrizione"
-            {...register("description")}
-          />
-          {errors.description && (
-            <span className="text-destructive text-sm">
-              {errors.description.message}
-            </span>
-          )}
-        </div>
-
         <div className="flex flex-col gap-1">
           <label
             htmlFor="urgency"
@@ -220,12 +219,7 @@ export default function TaskForm({
           >
             Scadenza
           </label>
-          <Input
-            id="deadline"
-            type="date"
-            className="cursor-pointer"
-            {...register("deadline")}
-          />
+          <Input id="deadline" type="date" {...register("deadline")} />
           {errors.deadline && (
             <span className="text-destructive text-sm">
               {errors.deadline.message}
@@ -284,7 +278,7 @@ export default function TaskForm({
           type="submit"
           variant="default"
           size="compact"
-          className="mt-8 w-full cursor-pointer"
+          className="mt-8 w-full"
         >
           {isSubmitting ? "Caricamento..." : submitLabel}
         </Button>
