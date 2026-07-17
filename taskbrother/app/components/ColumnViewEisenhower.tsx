@@ -52,17 +52,17 @@ export default function ColumnViewEisenhower({
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`flex flex-col shrink-0 rounded-lg p-4 bg-gray-200 transition-all duration-200 shadow-xl ${
-        isDragOver
-          ? "bg-gray-200 border border-blue-400"
-          : "bg-gray-50 border border-transparent"
+      className={`flex flex-col shrink-0 rounded-lg p-4 bg-secondary transition-all duration-200 shadow-xl ${
+        isDragOver ? "border border-blue-400" : "border border-transparent"
       }`}
     >
-      <div className="flex justify-between items-center mb-4 gap-2">
-        <h2 className="font-bold cursor-pointer">{column.title}</h2>
+      <div className="flex justify-between items-center mb-4 gap-2 border-b pb-2 border-primary/20">
+        <h2 className="text-primary font-bold cursor-pointer">
+          {column.title}
+        </h2>
 
         <div className="flex items-center content-center gap-3">
-          <span className=" text-black text-sm font-bold px-2 py-0.5">
+          <span className="text-primary text-sm font-bold px-2 py-0.5">
             {tasksList.length}
           </span>
           <button
@@ -80,7 +80,7 @@ export default function ColumnViewEisenhower({
         </div>
       </div>
 
-      <ul className="overflow-y-auto flex-1 mb-4 min-h-72 grid grid-cols-1 lg:grid-cols-2 gap-4 w-full bg-gray-200 rounded-lg">
+      <ul className="overflow-y-auto flex-1 mb-4 min-h-72 grid grid-cols-1 lg:grid-cols-2 gap-4 w-full bg-secondary rounded-lg">
         {tasksList.map((task) => (
           <TaskItem
             key={task.id}

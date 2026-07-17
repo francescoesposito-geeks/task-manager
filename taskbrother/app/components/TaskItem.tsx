@@ -75,8 +75,8 @@ export default function TaskItem({
 
   return (
     <li
-      className={`flex flex-col p-4 max-h-fit text-center gap-3 rounded-lg shadow list-none border ${
-        urgent ? "border-red-300 bg-red-50" : "border-gray-300 bg-white"
+      className={`flex flex-col p-4 max-h-fit text-center gap-3 rounded-lg shadow list-none border bg-background ${
+        urgent ? "border-destructive border-3" : "border-border"
       }`}
       draggable="true"
       onDragStart={(e) => {
@@ -101,35 +101,35 @@ export default function TaskItem({
         </Button>
       </div>
 
-      <h3 className="font-bold border-b border-gray-200 pb-2 wrap-break-word">
+      <h3 className="text-primary font-bold border-b border-primary/20 pb-2 wrap-break-word">
         {task.title}
       </h3>
 
       {task.description && (
-        <p className="text-sm text-gray-900 pb-4 wrap-break-word border-b border-gray-200">
+        <p className="text-sm text-primary/90 pb-4 wrap-break-word border-b border-primary/20">
           {task.description}
         </p>
       )}
 
       {isEisenhower ? (
-        <h4 className="text-sm text-gray-800 uppercase rounded px-2 py-1 border-b border-gray-200 pb-2">
+        <h4 className="text-sm text-primary uppercase rounded px-2 py-1 border-b border-primary/20 pb-2">
           {task.state}
         </h4>
       ) : (
-        <div className="flex justify-center border-b border-gray-200 pb-4">
-          <span className="text-sm text-gray-800 uppercase">
+        <div className="flex justify-center border-b border-primary/20 pb-4">
+          <span className="text-sm text-primary uppercase">
             {task.priority} & {task.urgency}
           </span>
         </div>
       )}
       {task.deadline && (
-        <p className="text-sm text-gray-600 pb-2 wrap-break-word">
+        <p className="text-sm text-primary pb-2 wrap-break-word">
           <span className="font-bold">Deadline: </span>
           {new Date(task.deadline).toLocaleDateString("it-IT")}
         </p>
       )}
       <Button
-        variant="standard"
+        variant="default"
         size="compact"
         onClick={() => setIsEditing(true)}
       >

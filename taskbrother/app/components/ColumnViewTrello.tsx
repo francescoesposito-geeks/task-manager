@@ -52,28 +52,26 @@ export default function ColumnViewTrello({
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`flex flex-col min-w-72 md:max-w-80 min-h-90 shrink-0 rounded-lg p-4 bg-gray-100 transition-all duration-200 shadow-xl ${
-        isDragOver
-          ? "bg-gray-200 border border-blue-400"
-          : "bg-gray-50 border border-transparent"
+      className={`flex flex-col min-w-72 md:max-w-80 min-h-90 shrink-0 rounded-lg p-4 bg-secondary transition-all duration-200 shadow-xl ${
+        isDragOver ? "border border-blue-400" : "border border-transparent"
       }`}
     >
-      <div className="flex justify-between items-center mb-4 gap-2">
-        <h2 className="font-bold cursor-pointer">{column.title}</h2>
+      <div className="flex justify-between items-center mb-4 gap-2 border-b pb-2 border-primary/20">
+        <h2 className="text-primary font-bold">{column.title}</h2>
 
         <div className="flex items-center content-center gap-3">
-          <span className=" text-black text-sm font-bold px-2 py-0.5">
+          <span className="text-primary text-sm font-bold px-2 py-0.5">
             {tasksList.length}
           </span>
           <button
             onClick={() => onMoveColumnLeft(column.id)}
-            className="text-gray-400 hover:text-gray-800 text-sm font-bold cursor-pointer"
+            className="text-primary/60 hover:text-primary text-sm font-bold cursor-pointer"
           >
             ◀
           </button>
           <button
             onClick={() => onMoveColumnRight(column.id)}
-            className="text-gray-400 hover:text-gray-800 text-sm font-bold cursor-pointer"
+            className="text-primary/60 hover:text-primary text-sm font-bold cursor-pointer"
           >
             ▶
           </button>

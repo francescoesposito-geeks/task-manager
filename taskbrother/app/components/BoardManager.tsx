@@ -11,6 +11,7 @@ import BoardEisenhower from "../components/BoardEisenhower";
 import { getPriorityUrgency } from "../../utils/getColumnId";
 import { Columns3, LayoutGrid } from "lucide-react";
 import TaskForm from "./TaskForm";
+import { ThemeSwitcher } from "./theme-switcher";
 
 export default function BoardManager() {
   const [columnsTrello, setColumnsTrello, isLoadedTrello] = useLocalStorage<
@@ -96,6 +97,7 @@ export default function BoardManager() {
         >
           {isEisenhower ? <LayoutGrid /> : <Columns3 />}
         </button>
+        <ThemeSwitcher />
       </div>
       <div className="flex flex-col flex-wrap gap-12 justify-center min-w-2/3">
         <div className="flex flex-col flex-wrap gap-12 justify-center min-w-2/3">
