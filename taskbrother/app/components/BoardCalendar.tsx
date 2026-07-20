@@ -8,6 +8,7 @@ import { Task } from "../../types/board";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { X } from "lucide-react";
+import TaskForm from "./TaskForm";
 
 const locales = { it };
 
@@ -42,20 +43,16 @@ export default function BoardCalendar({
   const [currentView, setCurrentView] = useState<View>("month");
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [isEditing, setIsEditing] = useState(false);
 
-  const events: CalendarEvent[] = tasks
-    .filter((t) => t.deadline !== undefined && t.deadline !== "")
-    .map((t) => {
-      const date = parseISO(t.deadline!);
-      return {
-        id: t.id,
-        title: t.title,
-        start: date,
-        end: date,
-        allDay: true,
-        resource: t
-      };
-    });
+  const events: CalendarEvent[] = tasks.map((task) => ({
+    id: task.id,
+    title: task.title,
+    start: parseISO(task.startDate),
+    end: parseISO(task.endDate),
+    allDay: true,
+    resource: task
+  }));
 
   const eventPropGetter = (event: CalendarEvent) => ({
     style: {
@@ -65,10 +62,16 @@ export default function BoardCalendar({
 
   const handleSelectEvent = (event: CalendarEvent) => {
     setSelectedTask(event.resource);
+    setIsEditing(false);
+  };
+
+  const handleClose = () => {
+    setSelectedTask(null);
+    setIsEditing(false);
   };
 
   return (
-    <div className="w-full bg-card p-4 rounded-lg shadow-xl">
+    <div className="w-full bg-card p-4 rounded-lg shadow-xl mb-16">
       <div className="h-175">
         <Calendar<CalendarEvent>
           localizer={localizer}
@@ -97,61 +100,113 @@ export default function BoardCalendar({
       {selectedTask && (
         <div
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-          onClick={() => setSelectedTask(null)}
+          onClick={handleClose}
         >
           <div
-            className="bg-card rounded-lg shadow-xl p-6 max-w-sm w-full mx-4 flex flex-col gap-3"
+            className="bg-card rounded-lg shadow-xl p-6 max-w-sm w-full mx-4 flex flex-col gap-3 overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex justify-end">
-              <Button
-                variant="close"
-                size="icon-close"
-                onClick={() => {
-                  onRemoveTask(selectedTask.id);
-                  setSelectedTask(null);
+            {isEditing ? (
+              <TaskForm
+                key={selectedTask.id}
+                variant="compact"
+                initialValues={{
+                  title: selectedTask.title,
+                  description: selectedTask.description ?? "",
+                  priority: selectedTask.priority,
+                  urgency: selectedTask.urgency,
+                  state: selectedTask.state,
+                  startDate: selectedTask.startDate,
+                  endDate: selectedTask.endDate
                 }}
-                aria-label="Elimina task"
+                onSubmit={(data) => {
+                  onUpdateTask({ ...selectedTask, ...data });
+                  handleClose();
+                }}
               >
-                <X className="size-3" />
-              </Button>
-            </div>
-            <h2 className="text-primary font-bold text-lg border-b border-primary/20 pb-2">
-              {selectedTask.title}
-            </h2>
-            {selectedTask.description && (
-              <p className="text-sm text-primary/80">
-                {selectedTask.description}
-              </p>
+                <div className="flex gap-2 justify-center mt-4">
+                  <Button type="submit" variant="success" size="compact">
+                    Salva
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="compact"
+                    onClick={() => setIsEditing(false)}
+                  >
+                    Annulla
+                  </Button>
+                </div>
+              </TaskForm>
+            ) : (
+              <>
+                <div className="flex justify-end">
+                  <Button
+                    variant="close"
+                    size="icon-close"
+                    onClick={handleClose}
+                    aria-label="Chiudi"
+                  >
+                    <X className="size-3" />
+                  </Button>
+                </div>
+                <h2 className="text-primary font-bold text-lg border-b border-primary/20 pb-2 wrap-break-word overflow-hidden">
+                  {selectedTask.title}
+                </h2>
+                {selectedTask.description && (
+                  <p className="text-sm text-primary/80 wrap-break-word overflow-hidden">
+                    {selectedTask.description}
+                  </p>
+                )}
+                <div className="flex gap-2 flex-wrap text-xs">
+                  <span className="bg-secondary px-2 py-1 rounded">
+                    {selectedTask.state}
+                  </span>
+                  <span className="bg-secondary px-2 py-1 rounded">
+                    {selectedTask.priority}
+                  </span>
+                  <span className="bg-secondary px-2 py-1 rounded">
+                    {selectedTask.urgency}
+                  </span>
+                </div>
+                {selectedTask.startDate && (
+                  <p className="text-sm text-primary">
+                    <span className="font-bold">Inizio: </span>
+                    {new Date(selectedTask.startDate).toLocaleDateString(
+                      "it-IT",
+                      { timeZone: "UTC" }
+                    )}
+                  </p>
+                )}
+                {selectedTask.endDate && (
+                  <p className="text-sm text-primary">
+                    <span className="font-bold">Fine: </span>
+                    {new Date(selectedTask.endDate).toLocaleDateString(
+                      "it-IT",
+                      { timeZone: "UTC" }
+                    )}
+                  </p>
+                )}
+                <div className="flex gap-2 justify-center mt-4">
+                  <Button
+                    variant="default"
+                    size="compact"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    Modifica
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="compact"
+                    onClick={() => {
+                      onRemoveTask(selectedTask.id);
+                      handleClose();
+                    }}
+                  >
+                    Elimina
+                  </Button>
+                </div>
+              </>
             )}
-            <div className="flex gap-2 flex-wrap text-xs">
-              <span className="bg-secondary px-2 py-1 rounded">
-                {selectedTask.state}
-              </span>
-              <span className="bg-secondary px-2 py-1 rounded">
-                {selectedTask.priority}
-              </span>
-              <span className="bg-secondary px-2 py-1 rounded">
-                {selectedTask.urgency}
-              </span>
-            </div>
-            {selectedTask.deadline && (
-              <p className="text-sm text-primary">
-                <span className="font-bold">Deadline: </span>
-                {new Date(selectedTask.deadline).toLocaleDateString("it-IT", {
-                  timeZone: "UTC"
-                })}
-              </p>
-            )}
-            <Button
-              type="submit"
-              variant="default"
-              size="compact"
-              className="mt-8 w-full"
-              onClick={() => setSelectedTask(null)}
-            >
-              Chiudi
-            </Button>
           </div>
         </div>
       )}

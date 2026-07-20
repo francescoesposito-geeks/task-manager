@@ -6,7 +6,6 @@ import {
   initialColumnsEisenhower,
   initialColumnsTrello
 } from "../../data/initialColumns";
-import { useState } from "react";
 import BoardEisenhower from "../components/BoardEisenhower";
 import { getPriorityUrgency } from "../../utils/getColumnId";
 import TaskForm from "./TaskForm";
@@ -20,10 +19,10 @@ export default function BoardManager() {
   >("boardTrello", initialColumnsTrello);
   const [columnsEisenhower, setColumnsEisenhower, isLoadedEisenhower] =
     useLocalStorage<Column[]>("boardEisenhower", initialColumnsEisenhower);
-  const [view, setView] = useState<"trello" | "eisenhower" | "calendar">(
-    "trello"
-  );
   const [tasks, setTasks, isLoadedTasks] = useLocalStorage<Task[]>("tasks", []);
+  const [view, setView, isLoadedView] = useLocalStorage<
+    "trello" | "eisenhower" | "calendar"
+  >("view", "trello");
 
   const handleAddTask = (item: Task) => {
     setTasks((prev) => [...prev, item]);
@@ -89,7 +88,12 @@ export default function BoardManager() {
     });
   };
 
-  if (!isLoadedTrello || !isLoadedEisenhower || !isLoadedTasks) {
+  if (
+    !isLoadedTrello ||
+    !isLoadedEisenhower ||
+    !isLoadedTasks ||
+    !isLoadedView
+  ) {
     return <div className="p-10 text-center text-gray-800">Caricamento...</div>;
   }
 

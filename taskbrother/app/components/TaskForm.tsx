@@ -52,7 +52,8 @@ export default function TaskForm({
       priority: undefined,
       urgency: undefined,
       state: undefined,
-      deadline: "",
+      startDate: "",
+      endDate: "",
       ...initialValues
     }
   });
@@ -107,24 +108,6 @@ export default function TaskForm({
 
         <div className="flex flex-col gap-1">
           <label
-            htmlFor="description"
-            className="text-sm font-semibold text-foreground"
-          >
-            Descrizione
-          </label>
-          <Textarea
-            id="description"
-            placeholder="Descrizione"
-            {...register("description")}
-          />
-          {errors.description && (
-            <span className="text-destructive text-sm">
-              {errors.description.message}
-            </span>
-          )}
-        </div>
-        <div className="flex flex-col gap-1">
-          <label
             htmlFor="priority"
             className="text-sm font-semibold text-foreground"
           >
@@ -164,6 +147,24 @@ export default function TaskForm({
           {errors.priority && (
             <span id="priority-error" className="text-destructive text-sm">
               {errors.priority.message}
+            </span>
+          )}
+        </div>
+        <div className="flex flex-col gap-1">
+          <label
+            htmlFor="description"
+            className="text-sm font-semibold text-foreground"
+          >
+            Descrizione
+          </label>
+          <Textarea
+            id="description"
+            placeholder="Descrizione"
+            {...register("description")}
+          />
+          {errors.description && (
+            <span className="text-destructive text-sm">
+              {errors.description.message}
             </span>
           )}
         </div>
@@ -214,21 +215,6 @@ export default function TaskForm({
 
         <div className="flex flex-col gap-1">
           <label
-            htmlFor="deadline"
-            className="text-sm font-semibold text-foreground"
-          >
-            Scadenza
-          </label>
-          <Input id="deadline" type="date" {...register("deadline")} />
-          {errors.deadline && (
-            <span className="text-destructive text-sm">
-              {errors.deadline.message}
-            </span>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label
             htmlFor="state"
             className="text-sm font-semibold text-foreground"
           >
@@ -266,6 +252,41 @@ export default function TaskForm({
           {errors.state && (
             <span id="state-error" className="text-destructive text-sm">
               {errors.state.message}
+            </span>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label
+            htmlFor="startDate"
+            className="text-sm font-semibold text-foreground"
+          >
+            Inizio <span aria-hidden="true">*</span>
+          </label>
+          <Input
+            id="startDate"
+            type="date"
+            className="cursor-pointer"
+            {...register("startDate")}
+          />
+          {errors.startDate && (
+            <span className="text-destructive text-sm">
+              {errors.startDate.message}
+            </span>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label
+            htmlFor="deadline"
+            className="text-sm font-semibold text-foreground"
+          >
+            Scadenza
+          </label>
+          <Input id="deadline" type="date" {...register("endDate")} />
+          {errors.endDate && (
+            <span className="text-destructive text-sm">
+              {errors.endDate.message}
             </span>
           )}
         </div>

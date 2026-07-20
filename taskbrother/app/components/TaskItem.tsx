@@ -23,7 +23,7 @@ export default function TaskItem({
   isEisenhower
 }: TaskItemProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const urgent = isDeadlineUrgent(task.deadline);
+  const urgent = isDeadlineUrgent(task.endDate);
 
   const handleSave = (data: TaskFormData) => {
     onUpdate({
@@ -33,7 +33,7 @@ export default function TaskItem({
       priority: data.priority,
       urgency: data.urgency,
       state: data.state,
-      deadline: data.deadline
+      endDate: data.endDate
     });
     setIsEditing(false);
 
@@ -56,7 +56,8 @@ export default function TaskItem({
             priority: task.priority,
             urgency: task.urgency,
             state: task.state,
-            deadline: task.deadline
+            startDate: task.startDate,
+            endDate: task.endDate
           }}
           onSubmit={handleSave}
         >
@@ -124,8 +125,13 @@ export default function TaskItem({
       )}
 
       <p className="text-sm text-primary pb-2 wrap-break-word">
-        <span className="font-bold">Deadline: </span>
-        {new Date(task.deadline).toLocaleDateString("it-IT")}
+        <span className="font-bold">inizio: </span>
+        {new Date(task.startDate).toLocaleDateString("it-IT")}
+      </p>
+
+      <p className="text-sm text-primary pb-2 wrap-break-word">
+        <span className="font-bold">fine: </span>
+        {new Date(task.endDate).toLocaleDateString("it-IT")}
       </p>
 
       <Button
