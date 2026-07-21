@@ -12,6 +12,13 @@ import TaskForm from "./TaskForm";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { ViewSwitcher } from "./ViewSwitcher";
 import BoardCalendar from "./BoardCalendar";
+import { useState, useEffect } from "react";
+import {
+  createTask,
+  deleteTask,
+  fetchTasks,
+  updateTask
+} from "../../lib/db/task";
 
 export default function BoardManager() {
   const [columnsTrello, setColumnsTrello, isLoadedTrello] = useLocalStorage<
@@ -19,47 +26,69 @@ export default function BoardManager() {
   >("boardTrello", initialColumnsTrello);
   const [columnsEisenhower, setColumnsEisenhower, isLoadedEisenhower] =
     useLocalStorage<Column[]>("boardEisenhower", initialColumnsEisenhower);
-  const [tasks, setTasks, isLoadedTasks] = useLocalStorage<Task[]>("tasks", []);
   const [view, setView, isLoadedView] = useLocalStorage<
     "trello" | "eisenhower" | "calendar"
   >("view", "trello");
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleAddTask = (item: Task) => {
-    setTasks((prev) => [...prev, item]);
+  useEffect(() => {
+    fetchTasks()
+      .then((data) => {
+        setTasks(data);
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setError("Impossibile caricare le task. Riprova.");
+        setIsLoading(false);
+      });
+  }, []);
+
+  const handleAddTask = async (item: Omit<Task, "id">) => {
+    const newTask = await createTask(item);
+    if (newTask) {
+      setTasks((prev) => [...prev, newTask]);
+    } else {
+      setError("Impossibile aggiungere la task. Riprova.");
+    }
   };
 
-  const handleRemoveTask = (taskId: string) => {
-    setTasks((prev) => prev.filter((item) => item.id !== taskId));
+  const handleRemoveTask = async (taskId: string) => {
+    const success = await deleteTask(taskId);
+    if (success) {
+      setTasks((prev) => prev.filter((item) => item.id !== taskId));
+    }
   };
 
-  const handleUpdateTask = (updatedTask: Task) => {
-    setTasks((prev) =>
-      prev.map((item) => (item.id === updatedTask.id ? updatedTask : item))
-    );
+  const handleUpdateTask = async (updatedTask: Task) => {
+    const result = await updateTask(updatedTask);
+    if (result) {
+      setTasks((prev) =>
+        prev.map((item) => (item.id === updatedTask.id ? result : item))
+      );
+    }
   };
 
-  const handleMoveTask = (
+  const handleMoveTask = async (
     fromColumnId: string,
     toColumnId: string,
     taskId: string
   ) => {
     if (fromColumnId === toColumnId) return;
-
-    setTasks((prev) => {
-      const taskToMove = prev.find((task) => task.id === taskId);
-      if (!taskToMove) return prev;
-
-      let updatedTask: Task;
-
-      if (view === "eisenhower") {
-        const { priority, urgency } = getPriorityUrgency(toColumnId);
-        updatedTask = { ...taskToMove, priority, urgency };
-      } else {
-        updatedTask = { ...taskToMove, state: toColumnId as Task["state"] };
-      }
-
-      return prev.map((item) => (item.id === taskId ? updatedTask : item));
-    });
+    const taskToMove = tasks.find((task) => task.id === taskId);
+    if (!taskToMove) return;
+    let updatedTask: Task;
+    if (view === "eisenhower") {
+      const { priority, urgency } = getPriorityUrgency(toColumnId);
+      updatedTask = { ...taskToMove, priority, urgency };
+    } else {
+      updatedTask = { ...taskToMove, state: toColumnId as Task["state"] };
+    }
+    setTasks((prev) =>
+      prev.map((item) => (item.id === taskId ? updatedTask : item))
+    );
+    await updateTask(updatedTask);
   };
 
   const handleMoveColumnLeft = (columnId: string) => {
@@ -88,17 +117,19 @@ export default function BoardManager() {
     });
   };
 
-  if (
-    !isLoadedTrello ||
-    !isLoadedEisenhower ||
-    !isLoadedTasks ||
-    !isLoadedView
-  ) {
-    return <div className="p-10 text-center text-gray-800">Caricamento...</div>;
+  if (!isLoadedTrello || !isLoadedEisenhower || !isLoadedView || isLoading) {
+    return (
+      <div className="p-10 text-center text-foreground">Caricamento...</div>
+    );
   }
 
   return (
     <div className="flex flex-col items-center gap-20 p-1 mt-8 w-full max-w-7xl">
+      {error && (
+        <div className="w-full bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-lg text-sm text-center">
+          {error}
+        </div>
+      )}
       <div className="flex justify-center mb-1 gap-8 items-start">
         <h1 className="font-bold text-4xl text-white">TASK MANAGER</h1>
         <ViewSwitcher view={view} onViewChange={setView} />
@@ -110,12 +141,7 @@ export default function BoardManager() {
             variant="full"
             heading="Nuova Task"
             submitLabel="Aggiungi task"
-            onSubmit={(data) => {
-              handleAddTask({
-                id: crypto.randomUUID(),
-                ...data
-              });
-            }}
+            onSubmit={handleAddTask}
           />
         </div>
       </div>

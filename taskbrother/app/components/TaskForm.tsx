@@ -19,11 +19,11 @@ import {
   SelectItem
 } from "./ui/select";
 import { Textarea } from "./ui/textarea";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 
 interface TaskFormProps {
   initialValues?: Partial<TaskFormData>;
-  onSubmit: (data: TaskFormData) => void;
+  onSubmit: (data: TaskFormData) => void | Promise<void>;
   variant?: "full" | "compact";
   heading?: string;
   submitLabel?: string;
@@ -58,8 +58,8 @@ export default function TaskForm({
     }
   });
 
-  const submitHandler = (data: TaskFormData) => {
-    onSubmit(data);
+  const submitHandler = async (data: TaskFormData) => {
+    await onSubmit(data);
     reset();
   };
 
@@ -108,33 +108,31 @@ export default function TaskForm({
 
         <div className="flex flex-col gap-1">
           <label
-            htmlFor="priority"
+            htmlFor="state"
             className="text-sm font-semibold text-foreground"
           >
-            Importanza
+            Stato
             <span aria-hidden="true"> *</span>
           </label>
           <Controller
-            name="priority"
+            name="state"
             control={control}
             render={({ field }) => (
               <Select
-                items={OPTIONS_PRIORITY}
+                items={OPTIONS_STATE}
                 value={field.value ?? ""}
                 onValueChange={field.onChange}
               >
                 <SelectTrigger
-                  id="priority"
+                  id="state"
                   className="w-full"
-                  aria-describedby={
-                    errors.priority ? "priority-error" : undefined
-                  }
+                  aria-describedby={errors.state ? "state-error" : undefined}
                 >
                   <SelectValue placeholder="Seleziona.." />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {OPTIONS_PRIORITY.map((item) => (
+                    {OPTIONS_STATE.map((item) => (
                       <SelectItem key={item.value} value={item.value}>
                         {item.label}
                       </SelectItem>
@@ -144,13 +142,14 @@ export default function TaskForm({
               </Select>
             )}
           />
-          {errors.priority && (
-            <span id="priority-error" className="text-destructive text-sm">
-              {errors.priority.message}
+          {errors.state && (
+            <span id="state-error" className="text-destructive text-sm">
+              {errors.state.message}
             </span>
           )}
         </div>
-        <div className="flex flex-col gap-1">
+
+        <div className={cn("flex flex-col gap-1", isFull && "col-span-2")}>
           <label
             htmlFor="description"
             className="text-sm font-semibold text-foreground"
@@ -161,6 +160,7 @@ export default function TaskForm({
             id="description"
             placeholder="Descrizione"
             {...register("description")}
+            rows={4}
           />
           {errors.description && (
             <span className="text-destructive text-sm">
@@ -215,31 +215,33 @@ export default function TaskForm({
 
         <div className="flex flex-col gap-1">
           <label
-            htmlFor="state"
+            htmlFor="priority"
             className="text-sm font-semibold text-foreground"
           >
-            Stato
+            Importanza
             <span aria-hidden="true"> *</span>
           </label>
           <Controller
-            name="state"
+            name="priority"
             control={control}
             render={({ field }) => (
               <Select
-                items={OPTIONS_STATE}
+                items={OPTIONS_PRIORITY}
                 value={field.value ?? ""}
                 onValueChange={field.onChange}
               >
                 <SelectTrigger
-                  id="state"
+                  id="priority"
                   className="w-full"
-                  aria-describedby={errors.state ? "state-error" : undefined}
+                  aria-describedby={
+                    errors.priority ? "priority-error" : undefined
+                  }
                 >
                   <SelectValue placeholder="Seleziona.." />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {OPTIONS_STATE.map((item) => (
+                    {OPTIONS_PRIORITY.map((item) => (
                       <SelectItem key={item.value} value={item.value}>
                         {item.label}
                       </SelectItem>
@@ -249,9 +251,9 @@ export default function TaskForm({
               </Select>
             )}
           />
-          {errors.state && (
-            <span id="state-error" className="text-destructive text-sm">
-              {errors.state.message}
+          {errors.priority && (
+            <span id="priority-error" className="text-destructive text-sm">
+              {errors.priority.message}
             </span>
           )}
         </div>
@@ -278,12 +280,12 @@ export default function TaskForm({
 
         <div className="flex flex-col gap-1">
           <label
-            htmlFor="deadline"
+            htmlFor="endDate"
             className="text-sm font-semibold text-foreground"
           >
             Scadenza
           </label>
-          <Input id="deadline" type="date" {...register("endDate")} />
+          <Input id="endDate" type="date" {...register("endDate")} />
           {errors.endDate && (
             <span className="text-destructive text-sm">
               {errors.endDate.message}

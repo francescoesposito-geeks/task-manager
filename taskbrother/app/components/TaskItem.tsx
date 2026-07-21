@@ -4,14 +4,14 @@ import { Task } from "../../types/board";
 import { TaskFormData } from "../../lib/schemas/task";
 import { isDeadlineUrgent } from "../../utils/deadLine";
 import { Button } from "../components/ui/button";
-import { Pointer, X } from "lucide-react";
+import { X } from "lucide-react";
 import TaskForm from "./TaskForm";
 
 export interface TaskItemProps {
   task: Task;
   currentColumnId: string;
   onRemove: (id: string) => void;
-  onUpdate: (updatedTask: Task) => void;
+  onUpdate: (updatedTask: Task) => void | Promise<void>;
   isEisenhower: boolean;
 }
 
@@ -25,8 +25,8 @@ export default function TaskItem({
   const [isEditing, setIsEditing] = useState(false);
   const urgent = isDeadlineUrgent(task.endDate);
 
-  const handleSave = (data: TaskFormData) => {
-    onUpdate({
+  const handleSave = async (data: TaskFormData) => {
+    await onUpdate({
       ...task,
       title: data.title.trim(),
       description: data.description?.trim() || undefined,
@@ -36,8 +36,6 @@ export default function TaskItem({
       endDate: data.endDate
     });
     setIsEditing(false);
-
-    return true;
   };
 
   const handleCancel = () => {

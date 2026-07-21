@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Column, Task } from "../../types/board";
 import TaskItem from "./TaskItem";
+import { Button } from "./ui/button";
 
 export interface ColumnViewEisenhowerProps {
   column: Column;
@@ -59,22 +60,28 @@ export default function ColumnViewEisenhower({
       <div className="flex justify-between items-center mb-4 gap-2 border-b pb-2 border-primary/20">
         <h2 className="text-primary font-bold">{column.title}</h2>
 
-        <div className="flex items-center content-center gap-3">
+        <div className="flex items-center content-center gap-1">
           <span className="text-primary text-sm font-bold px-2 py-0.5">
             {tasksList.length}
           </span>
-          <button
+
+          <Button
+            variant="ghost"
+            size="icon-xs"
             onClick={() => onMoveColumnLeft(column.id)}
-            className="text-gray-400 hover:text-gray-800 text-sm font-bold"
+            aria-label="Sposta colonna a sinistra"
           >
             ◀
-          </button>
-          <button
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon-xs"
             onClick={() => onMoveColumnRight(column.id)}
-            className="text-gray-400 hover:text-gray-800 text-sm font-bold"
+            aria-label="Sposta colonna a destra"
           >
             ▶
-          </button>
+          </Button>
         </div>
       </div>
 
