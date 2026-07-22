@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./globals.css";
 import Providers from "./providers";
 
@@ -29,7 +30,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-screen flex flex-col bg-linear-to-br from-slate-800 via-slate-600 to-slate-600 bg-fixed">
+      <body className="min-h-screen flex flex-col bg-background text-foreground">
         <Providers>{children}</Providers>
       </body>
     </html>

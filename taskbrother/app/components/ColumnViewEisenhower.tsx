@@ -54,7 +54,7 @@ export default function ColumnViewEisenhower({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       className={`flex flex-col shrink-0 rounded-lg p-4 bg-secondary transition-all duration-200 shadow-xl ${
-        isDragOver ? "border border-blue-400" : "border border-transparent"
+        isDragOver ? "border border-blue-400" : "border border-black/10"
       }`}
     >
       <div className="flex justify-between items-center mb-4 gap-2 border-b pb-2 border-primary/20">

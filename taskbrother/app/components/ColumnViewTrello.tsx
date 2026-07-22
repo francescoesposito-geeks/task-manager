@@ -33,7 +33,15 @@ export default function ColumnViewTrello({
 
   const handleDragOver = (e: React.DragEvent) => e.preventDefault();
   const handleDragEnter = () => setIsDragOver(true);
-  const handleDragLeave = () => setIsDragOver(false);
+  const handleDragLeave = (e: React.DragEvent) => {
+    if (
+      e.relatedTarget instanceof Node &&
+      e.currentTarget.contains(e.relatedTarget)
+    ) {
+      return;
+    }
+    setIsDragOver(false);
+  };
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
@@ -54,7 +62,7 @@ export default function ColumnViewTrello({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       className={`flex flex-col min-w-72 md:max-w-80 min-h-90 shrink-0 rounded-lg p-4 bg-secondary transition-all duration-200 shadow-xl ${
-        isDragOver ? "border border-blue-400" : "border border-transparent"
+        isDragOver ? "border border-blue-400" : "border border-black/10"
       }`}
     >
       <div className="flex justify-between items-center mb-4 gap-2 border-b pb-2 border-primary/20">

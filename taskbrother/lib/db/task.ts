@@ -1,5 +1,5 @@
 import { Task } from "../../types/board";
-import { mapRowToTask, mapTaskToRow, TaskRow } from "../mappers/task";
+import { mapRowToTask, mapTaskToRow } from "../mappers/task";
 import { supabase } from "../supabase/client";
 
 export async function fetchTasks(): Promise<Task[]> {
@@ -44,7 +44,7 @@ export async function updateTask(task: Task): Promise<Task | null> {
     return null;
   }
 
-  return mapRowToTask(data as TaskRow);
+  return mapRowToTask(data);
 }
 
 export async function deleteTask(taskId: string): Promise<boolean> {
@@ -54,6 +54,5 @@ export async function deleteTask(taskId: string): Promise<boolean> {
     console.error("Errore nell'eliminazione della task:", error.message);
     return false;
   }
-
   return true;
 }

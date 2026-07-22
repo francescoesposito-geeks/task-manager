@@ -19,6 +19,8 @@ import {
   fetchTasks,
   updateTask
 } from "../../lib/db/task";
+import { Button } from "./ui/button";
+import Modal from "./Modal";
 
 export default function BoardManager() {
   const [columnsTrello, setColumnsTrello, isLoadedTrello] = useLocalStorage<
@@ -32,6 +34,7 @@ export default function BoardManager() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isOpenModal, setIsOpenModal] = useState(false);
 
   useEffect(() => {
     fetchTasks()
@@ -45,8 +48,8 @@ export default function BoardManager() {
       });
   }, []);
 
-  const handleAddTask = async (item: Omit<Task, "id">) => {
-    const newTask = await createTask(item);
+  const handleAddTask = async (task: Omit<Task, "id">) => {
+    const newTask = await createTask(task);
     if (newTask) {
       setTasks((prev) => [...prev, newTask]);
     } else {
@@ -117,6 +120,10 @@ export default function BoardManager() {
     });
   };
 
+  const handleCloseModal = () => {
+    setIsOpenModal(false);
+  };
+
   if (!isLoadedTrello || !isLoadedEisenhower || !isLoadedView || isLoading) {
     return (
       <div className="p-10 text-center text-foreground">Caricamento...</div>
@@ -124,27 +131,40 @@ export default function BoardManager() {
   }
 
   return (
-    <div className="flex flex-col items-center gap-20 p-1 mt-8 w-full max-w-7xl">
-      {error && (
-        <div className="w-full bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-lg text-sm text-center">
-          {error}
-        </div>
-      )}
-      <div className="flex justify-center mb-1 gap-8 items-start">
-        <h1 className="font-bold text-4xl text-white">TASK MANAGER</h1>
+    <div className="flex flex-col items-center gap-14 p-1 mt-22 w-full max-w-7xl">
+      <div className="flex justify-center mb-1 gap-8 items-center">
+        <h1 className="font-bold text-4xl text-primary">TASK MANAGER</h1>
         <ViewSwitcher view={view} onViewChange={setView} />
         <ThemeSwitcher />
       </div>
-      <div className="flex flex-col flex-wrap gap-12 justify-center min-w-2/3">
-        <div className="flex flex-col flex-wrap gap-12 justify-center min-w-2/3">
-          <TaskForm
-            variant="full"
-            heading="Nuova Task"
-            submitLabel="Aggiungi task"
-            onSubmit={handleAddTask}
-          />
+      {error && (
+        <div className="w-full bg-destructive/10 border border-destructive text-destructive px-4 py-2 rounded-lg text-sm text-center">
+          {error}
         </div>
+      )}
+
+      <div className="flex flex-col flex-wrap gap-12 justify-center min-w-2/3 content-center">
+        <Button
+          variant="secondary"
+          size="xs"
+          className="min-w-2/4 py-4 border border-black/20 shadow-2xl"
+          onClick={() => setIsOpenModal(true)}
+        >
+          + inserisci Task
+        </Button>
+        {isOpenModal && (
+          <Modal onClose={handleCloseModal}>
+            <TaskForm
+              variant="full"
+              heading="Nuova Task"
+              submitLabel="Aggiungi task"
+              onSubmit={handleAddTask}
+              onCloseModal={handleCloseModal}
+            />
+          </Modal>
+        )}
       </div>
+
       {view === "eisenhower" && (
         <BoardEisenhower
           tasks={tasks}
