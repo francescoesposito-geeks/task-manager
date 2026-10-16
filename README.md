@@ -4,6 +4,14 @@ Task manager in Next.js con tre viste sulla stessa lista di task: **Kanban** (To
 
 Funziona subito in locale, senza configurazione. Se vuoi, puoi attivare un login vero e il salvataggio su database con **Supabase**.
 
+<p align="center">
+  <img src="docs/kanban.png" alt="Vista Kanban con le colonne To do, Blocked, Doing, Testing e Done e una task nella colonna Blocked" width="800">
+</p>
+
+| Matrice di Eisenhower | Calendario delle scadenze |
+| --- | --- |
+| <img src="docs/eisenhower.png" alt="Matrice di Eisenhower con una task nel quadrante Urgente e Importante" width="400"> | <img src="docs/calendario.png" alt="Calendario del mese di ottobre 2026 con il giorno corrente evidenziato" width="400"> |
+
 ## Funzionalità
 
 - Creazione, modifica ed eliminazione delle task, con validazione del form (Zod e React Hook Form)
@@ -77,6 +85,7 @@ task-manager/
 │   ├── page.tsx           # profili o login, poi la board
 │   └── providers.tsx      # TanStack Query, tema, sessione
 ├── data/                  # colonne iniziali e opzioni dei select
+├── docs/                  # screenshot usati in questo README
 ├── hooks/                 # useTasks (TanStack Query), useLocalStorage, useIsClient
 ├── lib/
 │   ├── config.ts          # modalità scelta con NEXT_PUBLIC_TASKS_STORAGE
